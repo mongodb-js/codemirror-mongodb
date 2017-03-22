@@ -8,7 +8,7 @@ https://mongodb-js.github.io/codemirror-mongodb
 
 ## TODO
 
-### mongodb-hint is filtered
+### mongodb-hint is filtered by prefix
 
 
 ### mongodb-hint is schema aware
@@ -27,11 +27,15 @@ So schema UI can be used to update the query
 
 Doesn't have any tests. Is some of our oldest React code.
 
-### query bar plugin integrated with CodeMirror
+### Integrate the query bar plugin with codemirror
 
-There is already an existing React component for codemirror: [react-codemirror|https://github.com/JedWatson/react-codemirror].
+There is already an existing React component for CodeMirror, [react-codemirror](https://github.com/JedWatson/react-codemirror), which was validated in COMPASS-913.
 
-### Make `oneline` simple
+The query bar plugin doesn't currently have any direct unit/enzyme tests and is some of our oldest React code. When estimating the work for this task, there will likely need to be additional time included for refactoring and tech debt burn-down.
+
+The [codemirror-mongodb](https://github.com/mongodb-js/codemirror-mongodb) README has (will have) details on how to integrate with react-codemirror for autocomplete, "single-line mode", and other mongodb specific features we want to leverage in Compass.
+
+To make
 
 ```javascript
 var options = {
@@ -40,21 +44,20 @@ var options = {
 };
 ```
 
-### Syntax highlighting in the query bar matches existing
+### Syntax highlighting in the query bar matches existing look and feel
 
+documentation for styling codemirror:
 https://codemirror.net/doc/manual.html#styling
-
-#### `mongodb` Theme
 
 Codemirror supports themes so we can use [this online editor](http://tmtheme-editor.herokuapp.com/) exported via [this node.js cli](https://github.com/FarhadG/codeMirror-aceEditor-theme-generator) so codemirror in Compass matches the style of the document list view.
 
+Alternatively, just update [`codemirror-mongodb/theme.css`](https://github.com/mongodb-js/codemirror-mongodb/blob/master/theme.css) to match the styles used already in the document list plugin. The [`codemirror-mongodb` demo](https://mongodb-js.github.io/codemirror-mongodb) is already configured to use the `mongodb` theme.
+
 #### `mongodb` Mode
 
-There is an existing [MongoDB grammar for Atom|https://atom.io/packages/language-mongodb] which can be converted into a mode for CodeMirror using [codemirror-atom-modes](https://www.npmjs.com/package/codemirror-atom-modes).
+There is an existing [MongoDB grammar for Atom](https://atom.io/packages/language-mongodb) which can be converted into a mode for CodeMirror using [codemirror-atom-modes](https://www.npmjs.com/package/codemirror-atom-modes).
 
 Long-term this might be good. Short-term, a lot of features we want are currently dependent on the `javascript` mode so we would need to rewire a few things.
-
-
 
 ## License
 

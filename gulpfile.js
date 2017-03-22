@@ -93,7 +93,7 @@ gulp.task('build', ['assets'], function() {
   var css = gulp.src('src/*.less')
     .pipe(less({
       plugins: [cleaner],
-      paths: pkg.less.paths
+      paths: []
     }))
     .pipe(gulp.dest('dist'));
 
