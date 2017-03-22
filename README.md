@@ -1,5 +1,7 @@
 # codemirror-mongodb [![travis][travis_img]][travis_url] [![npm][npm_img]][npm_url]
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/mongodb-js/codemirror-mongodb.svg)](https://greenkeeper.io/)
+
 > Use CodeMirror with MongoDB.
 
 ## Demo
