@@ -8,11 +8,6 @@ https://mongodb-js.github.io/codemirror-mongodb
 
 ## Todo
 
-- Convert JS object to string for programatic updates
-  - https://github.com/blakeembrey/javascript-stringify
-- Convert JS string to object to extended json
-  - https://www.npmjs.com/package/context-eval from replit
-  - https://github.com/substack/static-eval
 - Repl for CodeMirror?
   - https://github.com/sdllc/cmjs-shell
   - https://github.com/azu/codemirror-console-ui

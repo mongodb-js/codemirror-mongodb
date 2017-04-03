@@ -20,7 +20,6 @@
   },
   "dependencies": {
     "debug": "^2.6.3",
-    "javascript-stringify": "^1.6.0"
   },
   "devDependencies": {
     "browserify": "^14.1.0",
@@ -37,7 +36,6 @@
     "mocha": "^3.2.0",
     "mongodb-js-fmt": "^0.0.3",
     "mongodb-js-precommit": "^0.2.8",
-    "pre-commit": "^1.0.6",
     "pretty-hrtime": "^1.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
