@@ -17,43 +17,52 @@ var pkg = require('./package.json');
 gulp.task('default', ['develop']);
 
 gulp.task('serve', function() {
-  return gulp.src('dist')
-    .pipe(webserver({
+  return gulp.src('dist').pipe(
+    webserver({
       host: 'localhost',
       port: 3000,
       open: true,
       directoryListing: false,
       livereload: true
-    }));
+    })
+  );
 });
 
 gulp.task('develop', ['assets', 'less', 'serve'], function() {
   gulp.watch(['index.less'], ['less']);
+  gulp.watch(['index.html'], ['assets']);
 
   /**
    * Gulp's [fast browserify builds recipe](http://git.io/iiCk-A)
    */
-  var bundler = watchify(browserify('./demo.js', {
-    cache: {},
-    packageCache: {},
-    fullPaths: true,
-    debug: false
-  }));
+  var bundler = watchify(
+    browserify('./demo.js', {
+      cache: {},
+      packageCache: {},
+      fullPaths: true,
+      debug: false
+    })
+  );
 
   function rebundle(changed) {
     var start = process.hrtime();
     if (changed) {
-      gutil.log('Changed', '\'' + gutil.colors.cyan(changed[1]) + '\'');
+      gutil.log('Changed', "'" + gutil.colors.cyan(changed[1]) + "'");
     }
 
-    gutil.log('Starting', '\'' + gutil.colors.cyan('rebundle') + '\'...');
-    return bundler.bundle()
+    gutil.log('Starting', "'" + gutil.colors.cyan('rebundle') + "'...");
+    return bundler
+      .bundle()
       .pipe(source('demo.js'))
       .pipe(gulp.dest('dist/'))
       .on('end', function() {
         var time = prettyTime(process.hrtime(start));
-        gutil.log('Finished', '\'' + gutil.colors.cyan('rebundle') + '\'',
-          'after', gutil.colors.magenta(time));
+        gutil.log(
+          'Finished',
+          "'" + gutil.colors.cyan('rebundle') + "'",
+          'after',
+          gutil.colors.magenta(time)
+        );
       });
   }
   bundler.on('update', rebundle);
@@ -62,7 +71,8 @@ gulp.task('develop', ['assets', 'less', 'serve'], function() {
 
 // Compile LESS to CSS.
 gulp.task('less', function() {
-  return gulp.src('index.less')
+  return gulp
+    .src('index.less')
     .pipe(sourcemaps.init())
     .pipe(less(pkg.less))
     .pipe(sourcemaps.write('./maps'))
@@ -70,8 +80,7 @@ gulp.task('less', function() {
 });
 
 gulp.task('assets', function() {
-  return gulp.src('index.html')
-    .pipe(gulp.dest('dist/'));
+  return gulp.src('index.html').pipe(gulp.dest('dist/'));
 });
 
 // Build in production mode.
@@ -90,11 +99,14 @@ gulp.task('build', ['assets'], function() {
     advanced: true
   });
 
-  var css = gulp.src('src/*.less')
-    .pipe(less({
-      plugins: [cleaner],
-      paths: []
-    }))
+  var css = gulp
+    .src('src/*.less')
+    .pipe(
+      less({
+        plugins: [cleaner],
+        paths: []
+      })
+    )
     .pipe(gulp.dest('dist'));
 
   return merge(js, css);
@@ -105,9 +117,9 @@ gulp.task('build', ['assets'], function() {
 gulp.task('deploy', ['build'], function() {
   var opts = {
     branch: 'gh-pages', // org/username uses master, else gh-pages
-    message: '[ci skip] gh-pages deploy ' + (process.env.GIT_COMMIT_MESSAGE || '')
+    message: '[ci skip] gh-pages deploy ' +
+      (process.env.GIT_COMMIT_MESSAGE || '')
   };
 
-  return gulp.src('dist/{*,**/*}')
-    .pipe(deploy(opts));
+  return gulp.src('dist/{*,**/*}').pipe(deploy(opts));
 });

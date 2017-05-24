@@ -19,7 +19,7 @@
     "url": "git://github.com/mongodb-js/codemirror-mongodb.git/issues"
   },
   "dependencies": {
-    "debug": "^2.6.3",
+    "debug": "^2.6.3"
   },
   "devDependencies": {
     "browserify": "^14.1.0",

@@ -10,7 +10,15 @@ require('codemirror/addon/edit/matchbrackets.js');
 
 // require('codemirror/addon/hint/javascript-hint.js');
 
-require('./lib/mongodb-hint');
+require('./lib/mongodb-hint')({
+  // dbs: {
+  //   compass: ['team', 'slack']
+  // },
+  fields: {
+    _id: 'ObjectId',
+    name: 'String'
+  }
+});
 
 var oneliner = CodeMirror.fromTextArea(document.getElementById('oneliner'), {
   lineNumbers: false, // hide line numbers from gutter
@@ -20,17 +28,27 @@ var oneliner = CodeMirror.fromTextArea(document.getElementById('oneliner'), {
   matchBrackets: true,
   theme: 'mongodb',
   extraKeys: {
-  //  "'$'": showQueryOperatorHints,
+    //  "'$'": showQueryOperatorHints,
     'Ctrl-Space': 'autocomplete'
   }
 });
 
 oneliner.on('beforeChange', function(cm, change) {
-  debug('oneliner beforeChange', change);
+  // debug('oneliner beforeChange', change);
   if (change.update) {
-    debug('oneliner stripping newlines before applying change');
     var newtext = change.text.join('').replace(/\n/g, '');
     change.update(change.from, change.to, [newtext]);
   }
   return true;
+});
+
+var docs = CodeMirror.fromTextArea(document.getElementById('documents'), {
+  mode: 'javascript',
+  autoCloseBrackets: true,
+  matchBrackets: true,
+  theme: 'mongodb',
+  extraKeys: {
+    //  "'$'": showQueryOperatorHints,
+    'Ctrl-Space': 'autocomplete'
+  }
 });
