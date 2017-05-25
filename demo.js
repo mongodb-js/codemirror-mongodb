@@ -29,7 +29,8 @@ var oneliner = CodeMirror.fromTextArea(document.getElementById('oneliner'), {
   theme: 'mongodb',
   extraKeys: {
     //  "'$'": showQueryOperatorHints,
-    'Ctrl-Space': 'autocomplete'
+    'Ctrl-Space': 'autocomplete',
+    'Shift-Enter': 'parse'
   }
 });
 

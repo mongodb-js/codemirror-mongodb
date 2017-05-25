@@ -6,18 +6,8 @@
 
 https://mongodb-js.github.io/codemirror-mongodb
 
-## Todo
 
-- Repl for CodeMirror?
-  - https://github.com/sdllc/cmjs-shell
-  - https://github.com/azu/codemirror-console-ui
-  - https://github.com/PETComputacaoUFPR/skulpt-console
-
-- completions are `{text, displayText, and className}` instead of just strings
-- completions are not just prefixes to current cursor when applied, e.g. `Object("|")`
-- mode can accept shell js instead of just query
-
-## Autocompletion Cases
+## Autocompletion Behavior
 
 `|` below is the user cursor position when autocomplete triggered
 or the resulting cursor position when a completion is applied.
@@ -126,6 +116,23 @@ Still 1 matching field so show extended
 - **`$nin`**
 - *`$nin: ["|"]`* for strings, *`n$in: [|]`* for numbers
 - **`$all`**
+
+## Todo
+
+- completions are `{text, displayText, and className}` instead of just strings
+- completions are not just prefixes to current cursor when applied, e.g. `Object("|")`
+- mode can accept shell js instead of just query
+- Toggle into multi-line mode for really long queries
+- Pretty formatting when in multi-line mode https://codemirror.net/2/demo/formatting.html
+- Extend js linting to show warning if
+  - current query not accepted by mongodb-language-model
+  - may miss indexes/have poor performance
+  - misspelled field names
+  - type mismatch between expression and field type
+- Repl mode
+    - https://github.com/sdllc/cmjs-shell
+    - https://github.com/azu/codemirror-console-ui
+    - https://github.com/PETComputacaoUFPR/skulpt-console
 
 ## License
 
