@@ -60,18 +60,18 @@ require('codemirror/addon/edit/matchbrackets.js');
 require('codemirror-mongodb/addon/hint/mongodb-hint');
 
 var App = React.createClass({
-	getInitialState: function() {
-		return {
-			code: "{}",
-		};
-	},
-	updateCode: function(newCode) {
-		this.setState({
-			code: newCode.join('').replace(/\n/g, ''),
-		});
-	},
-	render: function() {
-		var options = {
+  getInitialState: function() {
+    return {
+      code: "{}",
+    };
+  },
+  updateCode: function(newCode) {
+    this.setState({
+      code: newCode.join('').replace(/\n/g, ''),
+    });
+  },
+  render: function() {
+    var options = {
       lineNumbers: false,
       scrollbarStyle: 'null',
       mode: 'javascript',
@@ -93,9 +93,9 @@ var App = React.createClass({
           }
         }
       }
-		};
-		return <CodeMirror value={this.state.code} onChange={this.updateCode} options={options} />
-	}
+    };
+    return <CodeMirror value={this.state.code} onChange={this.updateCode} options={options} />
+  }
 });
 
 React.render(<App />, document.getElementById('app'));
