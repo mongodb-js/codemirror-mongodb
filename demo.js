@@ -1,26 +1,19 @@
-require('debug').enable('*');
-var debug = require('debug')('codemirror-mongodb');
-
 var CodeMirror = require('codemirror');
-
 require('codemirror/mode/javascript/javascript');
 require('codemirror/addon/hint/show-hint.js');
 require('codemirror/addon/edit/closebrackets.js');
 require('codemirror/addon/edit/matchbrackets.js');
+require('./addon/hint/mongodb-hint');
 
-// require('codemirror/addon/hint/javascript-hint.js');
-
-require('./lib/mongodb-hint')({
-  // dbs: {
-  //   compass: ['team', 'slack']
-  // },
-  fields: {
-    _id: 'ObjectId',
-    name: 'String'
+function formatAsSingleLine(cm, change) {
+  if (change.update) {
+    var newtext = change.text.join('').replace(/\n/g, '');
+    change.update(change.from, change.to, [newtext]);
   }
-});
+  return true;
+}
 
-var oneliner = CodeMirror.fromTextArea(document.getElementById('oneliner'), {
+CodeMirror.fromTextArea(document.getElementById('oneliner'), {
   lineNumbers: false, // hide line numbers from gutter
   scrollbarStyle: 'null', // completely hide scollbars
   mode: 'javascript',
@@ -28,28 +21,34 @@ var oneliner = CodeMirror.fromTextArea(document.getElementById('oneliner'), {
   matchBrackets: true,
   theme: 'mongodb',
   extraKeys: {
-    //  "'$'": showQueryOperatorHints,
     'Ctrl-Space': 'autocomplete',
     'Shift-Enter': 'parse'
+  },
+  hintOptions: {
+    mongodb: {
+      fields: {
+        _id: 'ObjectId',
+        name: 'String',
+        age: 'Number',
+        number_of_pets: 'Number',
+        addresses: 'Array',
+        'addresses.street': 'String'
+      }
+    }
   }
-});
+}).on('beforeChange', formatAsSingleLine);
 
-oneliner.on('beforeChange', function(cm, change) {
-  // debug('oneliner beforeChange', change);
-  if (change.update) {
-    var newtext = change.text.join('').replace(/\n/g, '');
-    change.update(change.from, change.to, [newtext]);
-  }
-  return true;
-});
-
-var docs = CodeMirror.fromTextArea(document.getElementById('documents'), {
+CodeMirror.fromTextArea(document.getElementById('documents'), {
   mode: 'javascript',
   autoCloseBrackets: true,
   matchBrackets: true,
   theme: 'mongodb',
   extraKeys: {
-    //  "'$'": showQueryOperatorHints,
     'Ctrl-Space': 'autocomplete'
+  },
+  hintOptions: {
+    mongodb: {
+      fields: {}
+    }
   }
 });

@@ -61,49 +61,6 @@ function MongoDBHintProvider(opts) {
 //   });
 // };
 
-// MongoDBHintProvider.prototype.getCompletions = function(token, context) {
-//   var found = [];
-//   var start = token.string;
-//   function maybeAdd(str) {
-//     if (str.lastIndexOf(start, 0) === 0 && found.indexOf(str) === -1) {
-//       debug('add', str);
-//       found.push(str);
-//     }
-//   }
-//
-//   function gatherCompletions(obj) {
-//     for (var k in obj) {
-//       maybeAdd(k);
-//     }
-//   }
-//
-//   if (context && context.length) {
-//     // If this is a property, see if it belongs to some object we can
-//     // find in the current environment.
-//     var obj = context.pop();
-//     var base;
-//
-//     if (obj.type && obj.type.indexOf('variable') === 0) {
-//       // if (options && options.additionalContext)
-//       //   base = options.additionalContext[obj.string];
-//       // if (!options || options.useGlobalScope !== false)
-//       //   base = base || global[obj.string];
-//     } else if (obj.type === 'string') {
-//       base = '';
-//     } else if (obj.type === 'atom') {
-//       base = 1;
-//     } else if (obj.type === 'function') {
-//     }
-//     while (base !== null && context.length) {
-//       base = base[context.pop().string];
-//     }
-//     if (base !== null) {
-//       gatherCompletions(base);
-//     }
-//   }
-//   return found;
-// };
-
 function splice(base, index, s) {
   return base.substring(0, index) + s + base.substring(index, base.length);
 }
@@ -128,23 +85,6 @@ MongoDBHintProvider.prototype.execute = function(cm) {
   }
 
   var inputWhenTriggered = `${splice(cm.getValue(), cursor.ch, '|')}`;
-
-  // var tprop = token;
-  // var context = null;
-  // // If it is a property, find out what it is a property of.
-  // while (tprop.type === 'property') {
-  //   tprop = cm.getTokenAt(createPosition(cursor.line, tprop.start));
-  //   if (tprop.string !== '.') {
-  //     return;
-  //   }
-  //   tprop = cm.getTokenAt(createPosition(cursor.line, tprop.start));
-  //   if (!context) {
-  //     context = [];
-  //   }
-  //   context.push(tprop);
-  // }
-  //
-  // var completions = this.getCompletions(token, context);
   var completions = [];
   /**
    * Case: List Field Names or Operators With Prefix
@@ -180,8 +120,8 @@ MongoDBHintProvider.prototype.execute = function(cm) {
      */
   } else if (token.state.cc.length === 2) {
     /**
-       * Case: Blank Slate
-       */
+     * Case: Blank Slate
+     */
     console.log('%s -> show field names only', inputWhenTriggered);
     completions.push.apply(completions, Object.keys(this.fields));
   } else if (token.state.cc.length === 5) {
@@ -210,17 +150,17 @@ MongoDBHintProvider.prototype.execute = function(cm) {
   return data;
 };
 
-module.exports = function(opts) {
-  var hinter = new MongoDBHintProvider(opts);
-  // Override autocomplete command to point at our provider.
-  CodeMirror.commands.autocomplete = function(cm) {
-    CodeMirror.showHint(cm, function(editor, options) {
-      return hinter.execute(editor);
-    });
-  };
+module.exports = MongoDBHintProvider;
 
-  CodeMirror.commands.parse = function(cm) {
-    debugger;
-  };
-  return hinter;
+// Override autocomplete command to point at our provider.
+CodeMirror.commands.autocomplete = function(cm) {
+  CodeMirror.showHint(cm, function(editor) {
+    var opts = editor.options.hintOptions.mongodb;
+    var hinter = new MongoDBHintProvider(opts);
+    return hinter.execute(editor);
+  });
+};
+
+CodeMirror.commands.parse = function(cm) {
+  debugger;
 };

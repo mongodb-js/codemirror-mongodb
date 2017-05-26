@@ -6,6 +6,101 @@
 
 https://mongodb-js.github.io/codemirror-mongodb
 
+## Usage
+
+```javascript
+var CodeMirror = require('codemirror');
+require('codemirror/mode/javascript/javascript');
+require('codemirror/addon/hint/show-hint.js');
+require('codemirror/addon/edit/closebrackets.js');
+require('codemirror/addon/edit/matchbrackets.js');
+require('codemirror-mongodb/addon/hint/mongodb-hint');
+
+CodeMirror.fromTextArea(document.getElementById('oneliner'), {
+  lineNumbers: false,
+  scrollbarStyle: 'null',
+  mode: 'javascript',
+  autoCloseBrackets: true,
+  matchBrackets: true,
+  theme: 'mongodb',
+  extraKeys: {
+    'Ctrl-Space': 'autocomplete',
+    'Shift-Enter': 'parse'
+  },
+  hintOptions: {
+    mongodb: {
+      fields: {
+        _id: 'ObjectId',
+        name: 'String',
+        age: 'Number',
+        number_of_pets: 'Number',
+        addresses: 'Array',
+        'addresses.street': 'String'
+      }
+    }
+  }
+}).on('beforeChange', function formatAsSingleLine(cm, change) {
+  if (change.update) {
+    var newtext = change.text.join('').replace(/\n/g, '');
+    change.update(change.from, change.to, [newtext]);
+  }
+  return true;
+});
+```
+
+### React
+
+```javascript
+var React = require('react');
+var CodeMirror = require('react-codemirror');
+require('codemirror/mode/javascript/javascript');
+require('codemirror/addon/hint/show-hint.js');
+require('codemirror/addon/edit/closebrackets.js');
+require('codemirror/addon/edit/matchbrackets.js');
+require('codemirror-mongodb/addon/hint/mongodb-hint');
+
+var App = React.createClass({
+	getInitialState: function() {
+		return {
+			code: "{}",
+		};
+	},
+	updateCode: function(newCode) {
+		this.setState({
+			code: newCode.join('').replace(/\n/g, ''),
+		});
+	},
+	render: function() {
+		var options = {
+      lineNumbers: false,
+      scrollbarStyle: 'null',
+      mode: 'javascript',
+      autoCloseBrackets: true,
+      matchBrackets: true,
+      theme: 'mongodb',
+      extraKeys: {
+        'Ctrl-Space': 'autocomplete'
+      },
+      hintOptions: {
+        mongodb: {
+          fields: {
+            _id: 'ObjectId',
+            name: 'String',
+            age: 'Number',
+            number_of_pets: 'Number',
+            addresses: 'Array',
+            'addresses.street': 'String'
+          }
+        }
+      }
+		};
+		return <CodeMirror value={this.state.code} onChange={this.updateCode} options={options} />
+	}
+});
+
+React.render(<App />, document.getElementById('app'));
+```
+
 
 ## Autocompletion Behavior
 
