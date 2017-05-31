@@ -1,12 +1,71 @@
 <!doctype html>
 <html>
   <head>
+    <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="index.css" />
     <title>codemirror-mongodb</title>
   </head>
   <body>
-    <textarea id="oneliner">{foo: "bar", d: new Date("2017-01-01T12:35:31.000Z")}</textarea>
-    <p><kbd>ctrl+space</kbd> to trigger autocomplete</p>
+    <div class="container-fluid">
+      <div class="col-md-6">
+        <h3>Query</h3>
+      <textarea id="oneliner">{}</textarea>
+      <p><kbd>ctrl+space</kbd> to trigger autocomplete | <kbd>shift+enter</kbd> to parse</p>
+    </div>
+    <div class="col-md-6">
+
+    <h3>Sample Documents</h3>
+     <p><kbd>shift+enter</kbd> to parse</p>
+    <textarea id="documents">[
+  {
+    _id: 1,
+    name: 'Lucas Hrabovsky',
+    first_name: 'Lucas',
+    last_name: 'Hrabovsky',
+    avatar: {
+      color: '6ce4b3',
+      image_urls: {
+        square_25: 'https://static.intercomassets.com/avatars/124738/square_25/2014-09-29_17.18.53-1462415402-1462469756.jpg?1462469756',
+        square_50: 'https://static.intercomassets.com/avatars/124738/square_50/2014-09-29_17.18.53-1462415402-1462469756.jpg?1462469756',
+        square_128: 'https://static.intercomassets.com/avatars/124738/square_128/2014-09-29_17.18.53-1462415402-1462469756.jpg?1462469756'
+      }
+    },
+    apps: [
+      {
+        name: 'MongoDB Compass'
+      }
+    ],
+    created_at: '2015-07-08T16:58:51.000Z',
+    is_team: false,
+    is_bot: false,
+    localized_sender_name: 'Lucas from MongoDB Compass',
+    department: 'Unknown',
+    app_permissions: [
+      {
+        can_send_messages: true,
+        role: 'full_access',
+        description: 'Full access',
+        descriptions: ['Full access']
+      }
+    ],
+    location_data: {
+      latitude: 40.7317,
+      longitude: -73.9885,
+      city_name: 'New York',
+      country_name: 'United States',
+      timezone: 'America/New_York'
+    },
+    has_unseen_changes: true
+  }
+]</textarea>
+
+  <h3>Parsed Fields</h3>
+  <textarea id="fields"></textarea>
+
+  <h3>Parsed Query</h3>
+  <textarea id="query"></textarea>
+</div>
+</div>
     <script src="demo.js"></script>
   </body>
 </html>

@@ -400,12 +400,14 @@ li.CodeMirror-hint-active {
 }
 
 body {
-  font-size: 21px;
+  font-size: 13px;
 }
 .CodeMirror {
-  height: auto;
   border: 1px solid #eee;
   border-radius: 4px;
+}
+.cm-s-oneliner {
+  height: auto;
 }
 
 /*# sourceMappingURL=maps/index.css.map */
