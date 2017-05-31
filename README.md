@@ -6,6 +6,48 @@
 
 https://mongodb-js.github.io/codemirror-mongodb
 
+## Background
+
+I recently took on the project of rewriting the query input for [MongoDB Compass][compass_url]. It’s a real pain when writing queries to have to keep the query language *and* the shape of the data you’re querying against in your working memory. MongoDB users have more important work to do.
+
+Autocompletion for field names is a feature request we hear a lot at MongoDB. We have a sketch in Compass of what the schema probably looks like. Leveraging schema analysis to enable autocompletion is a feature we’ve been wanting to build for a long time.
+
+After weighing my options and researching the existing libraries I could potentially use, I kept coming back to one, CodeMirror.
+
+[CodeMirror][CodeMirror] is the defacto open-source code editor. CodeMirror is used in the devtools for Firefox, Chrome, and Safari, in Light Table, Adobe Brackets, Bitbucket, and [over 100 other projects][CodeMirror realworld].
+
+Why choose this project in particular to introduce our mongodb-js open source work?
+
+> 1. Has obvious utility to non-mongodb developers.
+
+Autocompletion is a great pattern for developers to know that is often black magic.
+
+> 2. non-trivial implementations
+
+Not the most difficult thing in the world. Suprising this doesn't already exist though.
+
+> 3. supports a technology with a large community of developers
+
+See [CodeMirror usage][CodeMirror realworld].
+
+> 4. is the only project answering its need
+
+There have been previous attempts to do this in the past (e.g. https://github.com/angelozerr/mongo-mapreduce-webbrowser, https://www.mongoclient.com/). These have all been purpose built for the surrounding app.
+
+codemirror-mongodb is a reusable library. We want all MongoDB UI's to use it. End of the day: want to help users.
+
+> 5. stands a chance of being improved by non-mongodb contributors
+
+Greatly. I can't wait to see how people customize this. See https://twitter.com/wesbos/status/839201941951504392
+
+> 6. repo already well groomed for collaboration
+
+Coming soon :grin:
+
+> 7. Easy to write about on its own
+
+Yes and incoporates features of our other mongodb-js modules. Also, visual and has nothing to do with testing.
+
 ## Usage
 
 ```javascript
@@ -219,7 +261,7 @@ Still 1 matching field so show extended
 - mode can accept shell js instead of just query
 - Toggle into multi-line mode for really long queries
 - Pretty formatting when in multi-line mode https://codemirror.net/2/demo/formatting.html
-- Extend js linting to show warning if
+- Extend js linting (see http://codemirror.net/demo/lint.html) to show warning if
   - current query not accepted by mongodb-language-model
   - may miss indexes/have poor performance
   - misspelled field names
@@ -237,3 +279,7 @@ Apache 2.0
 [travis_url]: https://travis-ci.org/mongodb-js/codemirror-mongodb
 [npm_img]: https://img.shields.io/npm/v/codemirror-mongodb.svg
 [npm_url]: https://npmjs.org/package/codemirror-mongodb
+[compass_url]: https://mongodb.com/compass
+[CodeMirror]: http://codemirror.net/
+[CodeMirror realworld]: http://codemirror.net/doc/realworld.html
+[mongodb-schema]: https://github.com/mongodb-js/mongodb-schema
