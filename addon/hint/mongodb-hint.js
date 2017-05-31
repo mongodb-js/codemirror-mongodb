@@ -172,7 +172,7 @@ class MongoDBHintProvider {
 module.exports = MongoDBHintProvider;
 
 function showMongoDBHintsForEditor(editor) {
-  const opts = editor.options.hintOptions.mongodb;
+  const opts = editor.getOption('mongodb');
   const hinter = new MongoDBHintProvider(opts.fields);
   return hinter.execute(editor);
 }
@@ -181,4 +181,4 @@ CodeMirror.commands.autocomplete = function(cm) {
   CodeMirror.showHint(cm, showMongoDBHintsForEditor);
 };
 
-CodeMirror.commands.parse = function(cm) {};
+CodeMirror.defineOption('mongodb', { fields: { _id: 'ObjectId' } });

@@ -1,4 +1,5 @@
 var CodeMirror = require('codemirror');
+window.CodeMirror = CodeMirror;
 require('codemirror/mode/javascript/javascript');
 require('codemirror/addon/hint/show-hint.js');
 require('codemirror/addon/edit/closebrackets.js');
@@ -13,7 +14,145 @@ function formatAsSingleLine(cm, change) {
   return true;
 }
 
-CodeMirror.fromTextArea(document.getElementById('oneliner'), {
+function makeOneliner(cm) {
+  cm.display.wrapper.classList.add('cm-s-oneliner');
+  cm.on('beforeChange', formatAsSingleLine);
+}
+
+const prettier = require('prettier');
+
+function formatJavascript(str) {
+  var res = prettier.format(`var QUERY = ${str}`, {
+    printWidth: 80,
+    tabWidth: 2,
+    singleQuote: true,
+    trailingComma: 'none',
+    bracketSpacing: false
+  });
+  res = res.replace('var QUERY = ', '');
+  res = res.replace(/;$/m, '');
+  return res;
+}
+
+const languageModel = require('mongodb-language-model');
+const EJSON = require('mongodb-extended-json');
+const parse = require('mongodb-query-parser');
+const parseSchema = require('mongodb-schema');
+
+var queryDisplay = CodeMirror.fromTextArea(document.getElementById('query'), {
+  mode: 'javascript',
+  autoCloseBrackets: true,
+  matchBrackets: true,
+  theme: 'mongodb'
+});
+
+var fieldsDisplay = CodeMirror.fromTextArea(document.getElementById('fields'), {
+  mode: 'javascript',
+  autoCloseBrackets: true,
+  matchBrackets: true,
+  theme: 'mongodb'
+});
+
+/**
+ * TODO (imlucas) Move schema field list code into mongodb-schema and dedupe FiewldStore.js.
+ */
+function _mergeFields(existingField, newField) {
+  return _.merge(existingField, newField, function(
+    objectValue,
+    sourceValue,
+    key
+  ) {
+    if (key === 'count') {
+      // counts add up
+      return _.isNumber(objectValue) ? objectValue + sourceValue : sourceValue;
+    }
+    if (key === 'type') {
+      // arrays concatenate and de-dupe
+      if (_.isString(objectValue)) {
+        return _.uniq([objectValue, sourceValue]);
+      }
+      return _.isArray(objectValue)
+        ? _.uniq(objectValue.concat(sourceValue))
+        : sourceValue;
+    }
+    // all other keys are handled as per default
+    return undefined;
+  });
+}
+const FIELDS = ['name', 'path', 'count', 'type'];
+const _ = require('lodash');
+function _generateFields(fields, nestedFields, rootField) {
+  if (!nestedFields) {
+    return;
+  }
+
+  if (rootField) {
+    if (!fields[rootField.path].hasOwnProperty('nestedFields')) {
+      fields[rootField.path].nestedFields = [];
+    }
+    nestedFields.map(f => {
+      fields[rootField.path].nestedFields.push(f.path);
+    });
+  }
+
+  for (const field of nestedFields) {
+    const existingField = _.get(fields, field.path, {});
+    const newField = _.pick(field, FIELDS);
+    fields[field.path] = _mergeFields(existingField, newField);
+
+    // recursively search sub documents
+    for (const type of field.types) {
+      if (type.name === 'Document') {
+        // add nested sub-fields
+        _generateFields(fields, type.fields, field);
+      }
+      if (type.name === 'Array') {
+        // add nested sub-fields of document type
+        const docType = _.find(type.types, 'name', 'Document');
+        if (docType) {
+          _generateFields(fields, docType.fields, field);
+        }
+      }
+    }
+  }
+}
+
+CodeMirror.commands.parse = function(cm) {
+  const input = cm.getValue();
+  const inputType = parse.detect(input);
+  console.log('inputType is', inputType);
+
+  const query = parse(input);
+  console.log('parsed query is', query);
+
+  const queryStr = EJSON.stringify(query);
+  console.log('queryStr is', queryStr);
+
+  if (Array.isArray(query)) {
+    console.log('Looks like an array. parsing docs');
+    parseSchema(query, { storeValues: false }, (err, schema) => {
+      if (err) {
+        return console.error('Schema parsing failed', err);
+      }
+
+      var fields = {};
+      _generateFields(fields, schema.fields);
+      cm.setOption('mongodb', { fields: fields });
+
+      fieldsDisplay.setValue(
+        formatJavascript(parse.toJavascriptString(fields))
+      );
+    });
+    return;
+  }
+
+  queryDisplay.setValue(formatJavascript(parse.toJavascriptString(query)));
+
+  console.log('language model accepts?', languageModel.accepts(queryStr));
+  console.log('language model ast?', languageModel.parse(queryStr));
+};
+
+var queryInput = CodeMirror.fromTextArea(document.getElementById('oneliner'), {
   lineNumbers: false, // hide line numbers from gutter
   scrollbarStyle: 'null', // completely hide scollbars
   mode: 'javascript',
@@ -24,31 +163,33 @@ CodeMirror.fromTextArea(document.getElementById('oneliner'), {
     'Ctrl-Space': 'autocomplete',
     'Shift-Enter': 'parse'
   },
-  hintOptions: {
-    mongodb: {
-      fields: {
-        _id: 'ObjectId',
-        name: 'String',
-        age: 'Number',
-        number_of_pets: 'Number',
-        addresses: 'Array',
-        'addresses.street': 'String'
-      }
-    }
+  mongodb: {
+    fields: {}
   }
-}).on('beforeChange', formatAsSingleLine);
+});
+makeOneliner(queryInput);
+queryInput.execCommand('parse');
 
-CodeMirror.fromTextArea(document.getElementById('documents'), {
+var docsInput = CodeMirror.fromTextArea(document.getElementById('documents'), {
   mode: 'javascript',
   autoCloseBrackets: true,
   matchBrackets: true,
   theme: 'mongodb',
   extraKeys: {
-    'Ctrl-Space': 'autocomplete'
+    'Ctrl-Space': 'autocomplete',
+    'Shift-Enter': 'parse'
   },
-  hintOptions: {
-    mongodb: {
-      fields: {}
-    }
+  mongodb: {
+    fields: {}
   }
 });
+
+docsInput.on('optionChange', function(cm, optionName) {
+  if (optionName !== 'mongodb') return;
+  console.log(
+    'copying mongodb fields from parsed `documents` editor to `query` editor.'
+  );
+  queryInput.setOption('mongodb', docsInput.getOption('mongodb'));
+});
+
+docsInput.execCommand('parse');
