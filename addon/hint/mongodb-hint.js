@@ -1,5 +1,10 @@
 const CodeMirror = require('codemirror');
 const createPosition = CodeMirror.Pos;
+
+const fuzzaldrin = require('fuzzaldrin-plus');
+
+require('./addon/hint/show-hint.js');
+
 const debug = require('debug')('codemirror-mongodb:mongodb-hint');
 
 const OPERATORS = [
@@ -58,37 +63,36 @@ class MongoDBHintProvider {
       token.string = token.string.slice(0, cursor.ch - token.start);
     }
 
-    const inputWhenTriggered = `${splice(cm.getValue(), cursor.ch, '|')}`;
+    const inputWhenTriggered = `${splice(cm.getValue(), cursor.ch, '█')}`;
 
-    const completions = [];
+    let completions = [];
 
     /**
      * Case: List Field Names or Operators With Prefix
      */
     if (token.type === 'variable') {
       debug(
-        '%s -> show only field names starting with `%s`',
+        '%s -> show only field names that fuzzy match `%s`',
         inputWhenTriggered,
         token.string
       );
 
-      if (token.string.charAt(0) === '$') {
-        const PREFIX = new RegExp('^\\' + token.string);
-        completions.push.apply(
-          completions,
-          OPERATORS.filter(function(o) {
-            return PREFIX.test(o);
-          })
-        );
-      } else {
-        const PREFIX_RE = new RegExp('^' + token.string);
-        completions.push.apply(
-          completions,
-          Object.keys(this.fields).filter(function(k) {
-            return PREFIX_RE.test(k);
-          })
-        );
-      }
+      const allCompletions = [];
+
+      allCompletions.push.apply(allCompletions, OPERATORS);
+      allCompletions.push.apply(allCompletions, Object.keys(this.fields));
+
+      completions = fuzzaldrin
+        .filter(allCompletions, token.string, {})
+        .map(function(k) {
+          var suggestion = {
+            text: k,
+            displayText: fuzzaldrin.wrap(k, token.string)
+          };
+          debug('suggestion', suggestion);
+          return suggestion;
+        });
+
       /**
        * TODO (imlucas) Automatically start the next clause?
        * if (completions.length === 1) ->
@@ -107,11 +111,18 @@ class MongoDBHintProvider {
       debug('%s -> show list of operators', inputWhenTriggered);
       completions.push.apply(completions, OPERATORS);
     } else {
+      debugger;
+      /**
+       * TODO (imlucas) Scan left 1 token to get the current field name
+       * which we can then use to look up the expected field type.
+       */
       /**
        * TODO (imlucas)
-       * if inputWhenTriggered = `{_id: |}` and
+       * if inputWhenTriggered = `{_id: █}` and
        * the schema type of _id is an ObjectId ->
-       *  completions.push('ObjectId("|")')
+       *  completions.push('ObjectId("█")')
+       *
+       * Or if a boolean, suggest - `false` - `true`
        */
       debug('%s -> expect user to input a value', inputWhenTriggered);
     }

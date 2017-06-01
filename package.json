@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "debug": "^2.6.3",
+    "fuzzaldrin-plus": "^0.4.1",
     "lodash": "^4.17.4",
     "mongodb-extended-json": "^1.9.0",
     "mongodb-language-model": "^1.1.0",
