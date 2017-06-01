@@ -88,8 +88,8 @@ gulp.task('build', ['assets'], function() {
   var js = browserify('./demo.js')
     .bundle()
     .pipe(source('demo.js'))
-    .pipe(buffer())
-    .pipe(uglify())
+    // .pipe(buffer())
+    // .pipe(uglify())
     .pipe(gulp.dest('dist/'));
 
   // Setup less plugin that will clean and compress.
