@@ -3,7 +3,6 @@ window.CodeMirror = CodeMirror;
 require('codemirror/mode/javascript/javascript');
 require('codemirror/addon/edit/closebrackets.js');
 require('codemirror/addon/edit/matchbrackets.js');
-require('./addon/hint/show-hint.js');
 require('./addon/hint/mongodb-hint');
 
 function formatAsSingleLine(cm, change) {

@@ -3,7 +3,7 @@ const createPosition = CodeMirror.Pos;
 
 const fuzzaldrin = require('fuzzaldrin-plus');
 
-require('./addon/hint/show-hint.js');
+require('./show-hint.js');
 
 const debug = require('debug')('codemirror-mongodb:mongodb-hint');
 
@@ -46,19 +46,19 @@ class MongoDBHintProvider {
 
   execute(cm) {
     const cursor = cm.getCursor();
-    let token = cm.getTokenAt(cursor);
+    const tokens = cm.getLineTokens(cursor.line);
+    const token = cm.getTokenAt(cursor);
+    const currentTokenIndex = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      if (tokens[i].end === token.end && tokens[i].start === token.start) {
+        currentTokenIndex = i;
+      }
+    }
 
-    if (!/^[\w$_]*$/.test(token.string)) {
-      debug('not a word-style token, ignore the token.', token);
-      token = {
-        isWordStyle: false,
-        start: cursor.ch,
-        end: cursor.ch,
-        string: '',
-        state: token.state,
-        type: token.string === '.' ? 'property' : null
-      };
-    } else if (token.end > cursor.ch) {
+    window.cm = cm;
+    window.cursor = cursor;
+
+    if (token.end > cursor.ch) {
       token.end = cursor.ch;
       token.string = token.string.slice(0, cursor.ch - token.start);
     }
@@ -66,6 +66,7 @@ class MongoDBHintProvider {
     const inputWhenTriggered = `${splice(cm.getValue(), cursor.ch, '█')}`;
 
     let completions = [];
+    window.token = token;
 
     /**
      * Case: List Field Names or Operators With Prefix
@@ -85,8 +86,13 @@ class MongoDBHintProvider {
       completions = fuzzaldrin
         .filter(allCompletions, token.string, {})
         .map(function(k) {
+          var text = k;
+          if (text.indexOf('.') > -1) {
+            text = `'${text}'`;
+          }
+
           var suggestion = {
-            text: k,
+            text: text,
             displayText: fuzzaldrin.wrap(k, token.string)
           };
           debug('suggestion', suggestion);
@@ -111,7 +117,6 @@ class MongoDBHintProvider {
       debug('%s -> show list of operators', inputWhenTriggered);
       completions.push.apply(completions, OPERATORS);
     } else {
-      debugger;
       /**
        * TODO (imlucas) Scan left 1 token to get the current field name
        * which we can then use to look up the expected field type.

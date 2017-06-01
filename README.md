@@ -16,44 +16,11 @@ After weighing my options and researching the existing libraries I could potenti
 
 [CodeMirror][CodeMirror] is the defacto open-source code editor. CodeMirror is used in the devtools for Firefox, Chrome, and Safari, in Light Table, Adobe Brackets, Bitbucket, and [over 100 other projects][CodeMirror realworld].
 
-Why choose this project in particular to introduce our mongodb-js open source work?
-
-> 1. Has obvious utility to non-mongodb developers.
-
-Autocompletion is a great pattern for developers to know that is often black magic.
-
-> 2. non-trivial implementations
-
-Not the most difficult thing in the world. Suprising this doesn't already exist though.
-
-> 3. supports a technology with a large community of developers
-
-See [CodeMirror usage][CodeMirror realworld].
-
-> 4. is the only project answering its need
-
-There have been previous attempts to do this in the past (e.g. https://github.com/angelozerr/mongo-mapreduce-webbrowser, https://www.mongoclient.com/). These have all been purpose built for the surrounding app.
-
-codemirror-mongodb is a reusable library. We want all MongoDB UI's to use it. End of the day: want to help users.
-
-> 5. stands a chance of being improved by non-mongodb contributors
-
-Greatly. I can't wait to see how people customize this. See https://twitter.com/wesbos/status/839201941951504392
-
-> 6. repo already well groomed for collaboration
-
-Coming soon :grin:
-
-> 7. Easy to write about on its own
-
-Yes and incoporates features of our other mongodb-js modules. Also, visual and has nothing to do with testing.
-
 ## Usage
 
 ```javascript
 var CodeMirror = require('codemirror');
 require('codemirror/mode/javascript/javascript');
-require('codemirror/addon/hint/show-hint.js');
 require('codemirror/addon/edit/closebrackets.js');
 require('codemirror/addon/edit/matchbrackets.js');
 require('codemirror-mongodb/addon/hint/mongodb-hint');
@@ -96,7 +63,6 @@ CodeMirror.fromTextArea(document.getElementById('oneliner'), {
 var React = require('react');
 var CodeMirror = require('react-codemirror');
 require('codemirror/mode/javascript/javascript');
-require('codemirror/addon/hint/show-hint.js');
 require('codemirror/addon/edit/closebrackets.js');
 require('codemirror/addon/edit/matchbrackets.js');
 require('codemirror-mongodb/addon/hint/mongodb-hint');
@@ -146,7 +112,7 @@ React.render(<App />, document.getElementById('app'));
 
 ## Autocompletion Behavior
 
-`|` below is the user cursor position when autocomplete triggered
+`█` below is the user cursor position when autocomplete triggered
 or the resulting cursor position when a completion is applied.
 
 Current schema of the selected namespace is:
@@ -161,11 +127,11 @@ var fields = {
 ```
 
 - **`${fieldPath}`** A completion for v1
-- *`${fieldPath}: |`* Maybe nice to add in the future
+- *`${fieldPath}: █`* Maybe nice to add in the future
 
 ### Blank Slate
 
-*Input* `{|}`
+*Input* `{█}`
 
 *Completions*
 
@@ -176,16 +142,16 @@ var fields = {
 
 #### Extended field based on field type
 
-*Input* `{_id|}`
+*Input* `{_id█}`
 
 *Completions*
 
 - **`_id`**
-- *`_id: ObjectId("|")`*
+- *`_id: ObjectId("█")`*
 
 ### List Field Names With Prefix
 
-*Input* `{n|}`
+*Input* `{n█}`
 
 2 matching fields
 
@@ -197,43 +163,43 @@ var fields = {
 
 #### Single Field Matched By Name Prefix
 
-*Input* `{na|}`
+*Input* `{na█}`
 
 1 matching field so show extended
 
 *Completions*
 
 - **`name`**
-- *`name: |`* with starter
-- *`name: "|"`* open exact match
-- *`name: /^|/`* open prefix regex
+- *`name: █`* with starter
+- *`name: "█"`* open exact match
+- *`name: /^█/`* open prefix regex
 
 #### Single Field Exact Match By Name
 
-*Input* `{name|}`
+*Input* `{name█}`
 
 Still 1 matching field so show extended
 
 *Completions*
 
 - **`name`**
-- *`name: |`* with starter
-- *`name: "|"`* open exact match
-- *`name: /^|/`* open prefix regex
+- *`name: █`* with starter
+- *`name: "█"`* open exact match
+- *`name: /^█/`* open prefix regex
 
 ### Specify Expression for Field
 
-*Input* `{name: |}`
+*Input* `{name: █}`
 
 *Completions*
 
-- *`|`* with starter
-- *`"|"`* open exact match
-- *`/^|/`* open prefix regex
+- *`█`* with starter
+- *`"█"`* open exact match
+- *`/^█/`* open prefix regex
 
 ### List Expression Operators for Field
 
-*Input* `{name: {|}}`
+*Input* `{name: {█}}`
 
 *Completions*
 
@@ -249,15 +215,15 @@ Still 1 matching field so show extended
 - *`$exists: false`* field not set
 - *`$exists: true`* field is set
 - **`$in`**
-- *`$in: ["|"]`* for strings, *`$in: [|]`* for numbers
+- *`$in: ["█"]`* for strings, *`$in: [█]`* for numbers
 - **`$nin`**
-- *`$nin: ["|"]`* for strings, *`n$in: [|]`* for numbers
+- *`$nin: ["█"]`* for strings, *`n$in: [█]`* for numbers
 - **`$all`**
 
 ## Todo
 
 - completions are `{text, displayText, and className}` instead of just strings
-- completions are not just prefixes to current cursor when applied, e.g. `Object("|")`
+- completions are not just prefixes to current cursor when applied, e.g. `Object("█")`
 - mode can accept shell js instead of just query
 - Toggle into multi-line mode for really long queries
 - Pretty formatting when in multi-line mode https://codemirror.net/2/demo/formatting.html
