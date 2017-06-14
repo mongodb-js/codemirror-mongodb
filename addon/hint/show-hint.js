@@ -7,10 +7,16 @@ var ACTIVE_HINT_ELEMENT_CLASS = 'CodeMirror-hint-active';
 // This is the old interface, kept around for now to stay
 // backwards-compatible.
 CodeMirror.showHint = function(cm, getHints, options) {
-  if (!getHints) return cm.showHint(options);
+  if (!getHints) {
+    return cm.showHint(options);
+  }
   if (options && options.async) getHints.async = true;
   var newOpts = { hint: getHints };
-  if (options) for (var prop in options) newOpts[prop] = options[prop];
+  if (options) {
+    for (var prop in options) {
+      newOpts[prop] = options[prop];
+    }
+  }
   return cm.showHint(newOpts);
 };
 
@@ -159,15 +165,26 @@ function isNewCompletion(old, nw) {
 function parseOptions(cm, pos, options) {
   var editor = cm.options.hintOptions;
   var out = {};
-  for (var prop in defaultOptions)
+  for (var prop in defaultOptions) {
     out[prop] = defaultOptions[prop];
-  if (editor)
-    for (var prop in editor)
-      if (editor[prop] !== undefined) out[prop] = editor[prop];
-  if (options)
-    for (var prop in options)
-      if (options[prop] !== undefined) out[prop] = options[prop];
-  if (out.hint.resolve) out.hint = out.hint.resolve(cm, pos);
+  }
+  if (editor) {
+    for (var prop in editor) {
+      if (editor[prop] !== undefined) {
+        out[prop] = editor[prop];
+      }
+    }
+  }
+  if (options) {
+    for (var prop in options) {
+      if (options[prop] !== undefined) {
+        out[prop] = options[prop];
+      }
+    }
+  }
+  if (out.hint.resolve) {
+    out.hint = out.hint.resolve(cm, pos);
+  }
   return out;
 }
 
