@@ -1,8 +1,7 @@
 var CodeMirror = require('codemirror');
+var _ = require('lodash');
+
 window.CodeMirror = CodeMirror;
-require('codemirror/mode/javascript/javascript');
-require('codemirror/addon/edit/closebrackets.js');
-require('codemirror/addon/edit/matchbrackets.js');
 require('./addon/hint/mongodb-hint');
 
 function formatAsSingleLine(cm, change) {
@@ -79,7 +78,6 @@ function _mergeFields(existingField, newField) {
   });
 }
 const FIELDS = ['name', 'path', 'count', 'type'];
-const _ = require('lodash');
 function _generateFields(fields, nestedFields, rootField) {
   if (!nestedFields) {
     return;

@@ -1,4 +1,7 @@
 const CodeMirror = require('codemirror');
+require('codemirror/mode/javascript/javascript');
+require('codemirror/addon/edit/closebrackets.js');
+require('codemirror/addon/edit/matchbrackets.js');
 require('./show-hint.js');
 
 const MongoDBHintProvider = require('../../');

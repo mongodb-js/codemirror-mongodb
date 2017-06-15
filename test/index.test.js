@@ -1,24 +1,23 @@
-var codemirrorMongodb = require('../');
 var assert = require('assert');
 var codemirror = require('./cm');
 var _ = require('lodash');
+var HintProvider = require('../');
 
-var arlo = {
-  _id: 'ObjectId()',
-  name: 'Arlo',
-  overdue_vet_visits: 0,
-  toys: [{ _id: 'ball', sythetic: true, color: 'orange' }],
-  birthday: new Date('2015-09-20')
-};
-
-var basil = {
-  _id: 'ObjectId()',
-  name: 'Basil',
-  overdue_vet_visits: 1,
-  toys: [{ _id: 'lobsta', sythetic: true, material: 'fabric', color: 'red' }],
-  birthday: new Date('2012-07-05')
-};
-
+// var arlo = {
+//   _id: 'ObjectId()',
+//   name: 'Arlo',
+//   overdue_vet_visits: 0,
+//   toys: [{ _id: 'ball', sythetic: true, color: 'orange' }],
+//   birthday: new Date('2015-09-20')
+// };
+//
+// var basil = {
+//   _id: 'ObjectId()',
+//   name: 'Basil',
+//   overdue_vet_visits: 1,
+//   toys: [{ _id: 'lobsta', sythetic: true, material: 'fabric', color: 'red' }],
+//   birthday: new Date('2012-07-05')
+// };
 var petFields = {
   _id: 'ObjectId',
   name: 'String',
@@ -30,8 +29,6 @@ var petFields = {
   overdue_vet_visits: 'Number',
   birthday: 'Date'
 };
-
-var HintProvider = require('../');
 
 var getHints = function(cm) {
   return new HintProvider(petFields).execute(cm);

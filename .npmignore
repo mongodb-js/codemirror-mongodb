@@ -3,3 +3,6 @@
 .travis.yml
 test/
 dist/
+demo.js
+gulpfile.js
+index.html

@@ -2,13 +2,11 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var prettyTime = require('pretty-hrtime');
 var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
 var gulp = require('gulp');
 var webserver = require('gulp-webserver');
 var gutil = require('gulp-util');
 var less = require('gulp-less');
 var deploy = require('gulp-gh-pages');
-var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var CleanCSS = require('less-plugin-clean-css');
 var merge = require('merge-stream');
@@ -117,8 +115,8 @@ gulp.task('build', ['assets'], function() {
 gulp.task('deploy', ['build'], function() {
   var opts = {
     branch: 'gh-pages', // org/username uses master, else gh-pages
-    message: '[ci skip] gh-pages deploy ' +
-      (process.env.GIT_COMMIT_MESSAGE || '')
+    message:
+      '[ci skip] gh-pages deploy ' + (process.env.GIT_COMMIT_MESSAGE || '')
   };
 
   return gulp.src('dist/{*,**/*}').pipe(deploy(opts));
