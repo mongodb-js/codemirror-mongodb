@@ -156,11 +156,20 @@ describe('codemirror-mongodb', function() {
     codemirror.describe('{_id: {█}', function() {});
     codemirror.describe('{name: {█}}', function() {
       var hints = getHints(this.ctx.cm);
-      var fieldNameHints = hints.list.filter(h => h.text.charAt(0) !== '$');
-      assert.equal(fieldNameHints.length, 0, 'should not have fieldNames');
-      assert(hints.list.length, 'should have hints');
-      assert.equal(hints.list[0].text, '$gte');
+
+      it('should only recommend operators', function() {
+        var fieldNameHints = hints.list.filter(h => h.text.charAt(0) !== '$');
+        assert.equal(fieldNameHints.length, 0, 'should not have fieldNames');
+        assert(hints.list.length, 'should have hints');
+        assert.equal(hints.list[0].text, '$gte');
+      });
     });
-    codemirror.describe('_id█', function() {});
+
+    codemirror.describe('{toys._i█}', function() {
+      var hints = getHints(this.ctx.cm);
+      it('should escape subdocument property paths', function() {
+        assert.equal(hints.list[0].text, "'toys._id'");
+      });
+    });
   });
 });
