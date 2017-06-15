@@ -134,13 +134,12 @@ describe('codemirror-mongodb', function() {
       });
     });
 
-    // TODO (imlucas) Use type info to complete values.
-    // codemirror.describe('{_id: █}', function() {
-    //   var hints = getHints(this.ctx.cm);
-    //   it('should template values based on type', function() {
-    //     assert.equal(hints.list[0].text, "ObjectId('");
-    //   });
-    // });
+    codemirror.describe('{_id: █}', function() {
+      var hints = getHints(this.ctx.cm);
+      it('should template values based on type', function() {
+        assert.equal(hints.list[0].text, "ObjectId('");
+      });
+    });
 
     codemirror.describe('{na█}', function() {
       var hints = getHints(this.ctx.cm);
@@ -176,6 +175,41 @@ describe('codemirror-mongodb', function() {
       it('should escape subdocument property paths', function() {
         assert.equal(hints.list[0].text, "'toys._id'");
       });
+    });
+  });
+  describe('fields', function() {
+    it('should default to a single _id field', function() {
+      var hp = new HintProvider();
+      assert.equal(Object.keys(hp.fields).length, 1);
+
+      assert.equal(hp.fields._id.name, '_id');
+      assert.equal(hp.fields._id.path, '_id');
+      assert.equal(hp.fields._id.type, 'ObjectId');
+    });
+
+    it('should expand type strings into a field summary', function() {
+      var hp = new HintProvider({ _id: 'ObjectId', name: 'String' });
+      assert.equal(hp.fields._id.name, '_id');
+      assert.equal(hp.fields._id.path, '_id');
+      assert.equal(hp.fields._id.type, 'ObjectId');
+
+      assert.equal(hp.fields.name.name, 'name');
+      assert.equal(hp.fields.name.path, 'name');
+      assert.equal(hp.fields.name.type, 'String');
+    });
+
+    it('should accept a field summary', function() {
+      var hp = new HintProvider({
+        _id: { name: '_id', path: '_id', type: 'ObjectId' },
+        name: { name: 'name', path: 'name', type: 'String' }
+      });
+      assert.equal(hp.fields._id.name, '_id');
+      assert.equal(hp.fields._id.path, '_id');
+      assert.equal(hp.fields._id.type, 'ObjectId');
+
+      assert.equal(hp.fields.name.name, 'name');
+      assert.equal(hp.fields.name.path, 'name');
+      assert.equal(hp.fields.name.type, 'String');
     });
   });
 });
