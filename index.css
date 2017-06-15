@@ -376,27 +376,50 @@ li.CodeMirror-hint-active {
   color: white;
 }
 
-/**
- * TODO (imlucas) Properly match colors and styles from Compass' documents view.
- * This is just the `neat` theme for now from:
- * https://raw.githubusercontent.com/codemirror/CodeMirror/master/theme/neat.css
- */
-.cm-s-mongodb span.cm-comment { color: #a86; }
-.cm-s-mongodb span.cm-keyword { line-height: 1em; font-weight: bold; color: blue; }
-.cm-s-mongodb span.cm-string { color: #a22; }
-.cm-s-mongodb span.cm-builtin { line-height: 1em; font-weight: bold; color: #077; }
-.cm-s-mongodb span.cm-special { line-height: 1em; font-weight: bold; color: #0aa; }
-.cm-s-mongodb span.cm-variable { color: black; }
-.cm-s-mongodb span.cm-number, .cm-s-mongodb span.cm-atom { color: #3a3; }
-.cm-s-mongodb span.cm-meta { color: #555; }
-.cm-s-mongodb span.cm-link { color: #3a3; }
+.cm-s-mongodb span.cm-comment {
+  color: #a86;
+}
+.cm-s-mongodb span.cm-keyword {
+  line-height: 1em;
+  font-weight: bold;
+  color: blue;
+}
+.cm-s-mongodb span.cm-string {
+  color: steelblue;
+}
+.cm-s-mongodb span.cm-builtin {
+  line-height: 1em;
+  font-weight: bold;
+  color: #077;
+}
+.cm-s-mongodb span.cm-special {
+  line-height: 1em;
+  font-weight: bold;
+  color: #0aa;
+}
+.cm-s-mongodb span.cm-variable {
+  color: #494747;
+}
+.cm-s-mongodb span.cm-number {
+  color: #1e8449;
+}
+.cm-s-mongodb span.cm-atom {
+  color: purple;
+}
+.cm-s-mongodb span.cm-meta {
+  color: #555;
+}
+.cm-s-mongodb span.cm-link {
+  color: #3a3;
+}
 
 .cm-s-mongodb .CodeMirror-activeline-background {
   background: #e8f2ff;
 }
 
 .cm-s-mongodb .CodeMirror-matchingbracket {
-  outline:1px solid grey; color:black !important;
+  outline: 1px solid grey;
+  color: #494747 !important;
 }
 
 body {
