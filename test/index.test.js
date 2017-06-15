@@ -134,6 +134,14 @@ describe('codemirror-mongodb', function() {
       });
     });
 
+    // TODO (imlucas) Use type info to complete values.
+    // codemirror.describe('{_id: █}', function() {
+    //   var hints = getHints(this.ctx.cm);
+    //   it('should template values based on type', function() {
+    //     assert.equal(hints.list[0].text, "ObjectId('");
+    //   });
+    // });
+
     codemirror.describe('{na█}', function() {
       var hints = getHints(this.ctx.cm);
       it('should recommend the name field', function() {
@@ -152,8 +160,6 @@ describe('codemirror-mongodb', function() {
       });
     });
 
-    codemirror.describe('{_id: █}', function() {});
-    codemirror.describe('{_id: {█}', function() {});
     codemirror.describe('{name: {█}}', function() {
       var hints = getHints(this.ctx.cm);
 
