@@ -122,7 +122,7 @@ describe('codemirror-mongodb', function() {
       var hints = getHints(this.ctx.cm);
       it('should recommend : for the _id field', function() {
         assert.equal(hints.list.length, 1);
-        assert.equal(hints.list[0].text, ': ');
+        assert.equal(hints.list[0].text, '_id: ');
       });
     });
 
@@ -176,6 +176,12 @@ describe('codemirror-mongodb', function() {
         assert.equal(hints.list[0].text, "'toys._id'");
       });
     });
+    // codemirror.describe("{name: 'lucas█}", function() {
+    //   var hints = getHints(this.ctx.cm);
+    //   it('should recommend closing the quote', function() {
+    //     assert.equal(hints.list[0].text, "'lucas'");
+    //   });
+    // });
   });
   describe('fields', function() {
     it('should default to a single _id field', function() {

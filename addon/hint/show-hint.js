@@ -1,3 +1,8 @@
+/**
+ * NOTE (imlucas) Including this inline for finer grain control
+ * over how the actual hints show up.
+ */
+
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 var CodeMirror = require('codemirror');
@@ -109,7 +114,8 @@ Completion.prototype = {
       this.debounce = 0;
     }
 
-    var pos = this.cm.getCursor(), line = this.cm.getLine(pos.line);
+    var pos = this.cm.getCursor(),
+      line = this.cm.getLine(pos.line);
     if (
       pos.line != this.startPos.line ||
       line.length - pos.ch != this.startLen - this.startPos.ch ||
@@ -129,7 +135,8 @@ Completion.prototype = {
 
   update: function(first) {
     if (this.tick == null) return;
-    var self = this, myTick = ++this.tick;
+    var self = this,
+      myTick = ++this.tick;
     fetchHints(this.options.hint, this.cm, this.options, function(data) {
       if (self.tick == myTick) self.finishUpdate(data, first);
     });
@@ -300,7 +307,8 @@ function Widget(completion, data) {
     window.innerHeight ||
     Math.max(document.body.offsetHeight, document.documentElement.offsetHeight);
   (completion.options.container || document.body).appendChild(hints);
-  var box = hints.getBoundingClientRect(), overlapY = box.bottom - winH;
+  var box = hints.getBoundingClientRect(),
+    overlapY = box.bottom - winH;
   var scrolls = hints.scrollHeight > hints.clientHeight + 1;
   var startScroll = cm.getScrollInfo();
 
@@ -504,7 +512,8 @@ function fetchHints(hint, cm, options, callback) {
 }
 
 function resolveAutoHints(cm, pos) {
-  var helpers = cm.getHelpers(pos, 'hint'), words;
+  var helpers = cm.getHelpers(pos, 'hint'),
+    words;
   if (helpers.length) {
     var resolved = function(cm, callback, options) {
       var app = applicableHelpers(cm, helpers);
@@ -538,12 +547,15 @@ CodeMirror.registerHelper('hint', 'auto', {
 });
 
 CodeMirror.registerHelper('hint', 'fromList', function(cm, options) {
-  var cur = cm.getCursor(), token = cm.getTokenAt(cur);
+  var cur = cm.getCursor(),
+    token = cm.getTokenAt(cur);
   var to = CodeMirror.Pos(cur.line, token.end);
   if (token.string && /\w/.test(token.string[token.string.length - 1])) {
-    var term = token.string, from = CodeMirror.Pos(cur.line, token.start);
+    var term = token.string,
+      from = CodeMirror.Pos(cur.line, token.start);
   } else {
-    var term = '', from = to;
+    var term = '',
+      from = to;
   }
   var found = [];
   for (var i = 0; i < options.words.length; i++) {

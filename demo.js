@@ -1,5 +1,6 @@
 var CodeMirror = require('codemirror');
 var _ = require('lodash');
+var debug = require('debug')('codemirror-mongodb:demo');
 
 window.CodeMirror = CodeMirror;
 require('./addon/hint/mongodb-hint');
@@ -116,17 +117,14 @@ function _generateFields(fields, nestedFields, rootField) {
 
 CodeMirror.commands.parse = function(cm) {
   const input = cm.getValue();
-  const inputType = parse.detect(input);
-  console.log('inputType is', inputType);
 
   const query = parse(input);
-  console.log('parsed query is', query);
+  debug('parsed query is', query);
 
   const queryStr = EJSON.stringify(query);
-  console.log('queryStr is', queryStr);
 
   if (Array.isArray(query)) {
-    console.log('Looks like an array. parsing docs');
+    debug('Looks like an array. parsing docs');
     parseSchema(query, { storeValues: false }, (err, schema) => {
       if (err) {
         return console.error('Schema parsing failed', err);
@@ -136,17 +134,15 @@ CodeMirror.commands.parse = function(cm) {
       _generateFields(fields, schema.fields);
       cm.setOption('mongodb', { fields: fields });
 
-      fieldsDisplay.setValue(
-        formatJavascript(parse.toJavascriptString(fields))
-      );
+      fieldsDisplay.setValue(formatJavascript(parse.stringify(fields)));
     });
     return;
   }
 
-  queryDisplay.setValue(formatJavascript(parse.toJavascriptString(query)));
+  queryDisplay.setValue(formatJavascript(parse.stringify(query)));
 
-  console.log('language model accepts?', languageModel.accepts(queryStr));
-  console.log('language model ast?', languageModel.parse(queryStr));
+  debug('language model accepts?', languageModel.accepts(queryStr));
+  debug('language model ast?', languageModel.parse(queryStr));
 };
 
 var queryInput = CodeMirror.fromTextArea(document.getElementById('oneliner'), {
@@ -183,7 +179,7 @@ var docsInput = CodeMirror.fromTextArea(document.getElementById('documents'), {
 
 docsInput.on('optionChange', function(cm, optionName) {
   if (optionName !== 'mongodb') return;
-  console.log(
+  debug(
     'copying mongodb fields from parsed `documents` editor to `query` editor.'
   );
   queryInput.setOption('mongodb', docsInput.getOption('mongodb'));

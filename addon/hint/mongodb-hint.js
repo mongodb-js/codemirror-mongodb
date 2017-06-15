@@ -5,15 +5,39 @@ require('codemirror/addon/edit/matchbrackets.js');
 require('./show-hint.js');
 
 const MongoDBHintProvider = require('../../');
+const debug = require('debug')('codemirror-mongodb:addon:hint:mongodb-hint');
+const _ = require('lodash');
 
 module.exports = function(editor) {
   const opts = editor.getOption('mongodb');
   const hinter = new MongoDBHintProvider(opts.fields);
-  return hinter.execute(editor);
+  const res = hinter.execute(editor);
+  debug('Hint Provider Results (%d)', res.list.length);
+  debug('  _case', res._case);
+  debug('  from', res.from);
+  debug('  to', res.to);
+  debug('  list');
+  res.list.map((h, i) => debug('    %d. %s', i + 1, h.text));
+  return res;
 };
 
 CodeMirror.commands.autocomplete = function(cm) {
-  CodeMirror.showHint(cm, module.exports);
+  let code = cm.getValue();
+  const hasOpenBracket = _.startsWith(code, '{');
+  const hasCloseBracket = _.endsWith(code, '}');
+
+  if (!hasOpenBracket) {
+    code = '{' + code;
+  }
+  if (!hasCloseBracket) {
+    code += '}';
+  }
+  if (!hasOpenBracket || !hasCloseBracket) {
+    cm.setValue(code);
+  }
+  process.nextTick(function() {
+    CodeMirror.showHint(cm, module.exports);
+  });
 };
 
 CodeMirror.defineOption('mongodb', { fields: { _id: 'ObjectId' } });
