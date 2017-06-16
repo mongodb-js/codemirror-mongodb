@@ -20,9 +20,6 @@ After weighing my options and researching the existing libraries I could potenti
 
 ```javascript
 var CodeMirror = require('codemirror');
-require('codemirror/mode/javascript/javascript');
-require('codemirror/addon/edit/closebrackets.js');
-require('codemirror/addon/edit/matchbrackets.js');
 require('codemirror-mongodb/addon/hint/mongodb-hint');
 
 CodeMirror.fromTextArea(document.getElementById('oneliner'), {
@@ -36,16 +33,14 @@ CodeMirror.fromTextArea(document.getElementById('oneliner'), {
     'Ctrl-Space': 'autocomplete',
     'Shift-Enter': 'parse'
   },
-  hintOptions: {
-    mongodb: {
-      fields: {
-        _id: 'ObjectId',
-        name: 'String',
-        age: 'Number',
-        number_of_pets: 'Number',
-        addresses: 'Array',
-        'addresses.street': 'String'
-      }
+  mongodb: {
+    fields: {
+      _id: 'ObjectId',
+      name: 'String',
+      age: 'Number',
+      number_of_pets: 'Number',
+      addresses: 'Array',
+      'addresses.street': 'String'
     }
   }
 }).on('beforeChange', function formatAsSingleLine(cm, change) {
@@ -62,9 +57,6 @@ CodeMirror.fromTextArea(document.getElementById('oneliner'), {
 ```javascript
 var React = require('react');
 var CodeMirror = require('react-codemirror');
-require('codemirror/mode/javascript/javascript');
-require('codemirror/addon/edit/closebrackets.js');
-require('codemirror/addon/edit/matchbrackets.js');
 require('codemirror-mongodb/addon/hint/mongodb-hint');
 
 var App = React.createClass({
@@ -75,11 +67,11 @@ var App = React.createClass({
   },
   updateCode: function(newCode) {
     this.setState({
-      code: newCode.join('').replace(/\n/g, ''),
+      code: newCode.replace(/\n/g, ''),
     });
   },
   render: function() {
-    var options = {
+    const options = {
       lineNumbers: false,
       scrollbarStyle: 'null',
       mode: 'javascript',
@@ -89,16 +81,14 @@ var App = React.createClass({
       extraKeys: {
         'Ctrl-Space': 'autocomplete'
       },
-      hintOptions: {
-        mongodb: {
-          fields: {
-            _id: 'ObjectId',
-            name: 'String',
-            age: 'Number',
-            number_of_pets: 'Number',
-            addresses: 'Array',
-            'addresses.street': 'String'
-          }
+      mongodb: {
+        fields: {
+          _id: 'ObjectId',
+          name: 'String',
+          age: 'Number',
+          number_of_pets: 'Number',
+          addresses: 'Array',
+          'addresses.street': 'String'
         }
       }
     };
