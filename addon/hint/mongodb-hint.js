@@ -34,48 +34,41 @@ CodeMirror.commands.autocomplete = function(cm) {
   }
   if (!hasOpenBracket || !hasCloseBracket) {
     cm.setValue(code);
+    const cursor = cm.getCursor();
+
+    /**
+     * So you end up with `{█}` instead of `█{}`
+     */
+    if (cursor.ch === 0) {
+      cursor.ch = 1;
+      cm.setCursor(cursor);
+    }
   }
   process.nextTick(function() {
     CodeMirror.showHint(cm, module.exports);
   });
 };
 
-CodeMirror.defineOption('mongodb', { fields: { _id: 'ObjectId' } });
+CodeMirror.defineOption('mongodb', { fields: { _id: 'ObjectId' }});
 
-// MongoDBHintProvider.prototype.gatherFields = function(prefix) {
-//   var keys = Object.keys(this.fields);
-//   var PREFIX_REGEX;
-//   if (prefix) {
-//     PREFIX_REGEX = new RegExp('^' + prefix);
-//     keys = keys.filter(function(k) {
-//       return PREFIX_REGEX.test(k);
-//     });
-//   }
-//
-//   keys.map(k => {
-//     // Use the type of field to provide a 1 click gesture that enters
-//     // 1. the field name
-//     // 2. opens a new predicate
-//     // 3. the surround predicate value based on the field type
-//     var text;
-//     var t = this.fields[k];
-//
-//     if (prefix) {
-//       text = k.replace(PREFIX_REGEX, '');
-//     } else {
-//       text = k + ': ';
-//     }
-//
-//     if (t === 'ObjectId') {
-//       text += 'ObjectId("'; // ")
-//     } else if (t === 'string') {
-//       text += '"'; // "
-//     } // etc etc
-//
-//     return {
-//       text: text,
-//       displayText: k + '(' + t + ')',
-//       className: 'CodeMirror-hint-mongodb--field'
-//     };
-//   });
-// };
+CodeMirror.defineInitHook(function(cm) {
+  cm.setOption('hintOptions', {container: cm.display.wrapper.parentNode});
+});
+
+function formatAsSingleLine(cm, change) {
+  if (change.update) {
+    var newtext = change.text.join('').replace(/\n/g, '');
+    change.update(change.from, change.to, [newtext]);
+  }
+  return true;
+}
+
+CodeMirror.defineOption('oneliner', true, function(cm, val) {
+  if (val === true) {
+    cm.display.wrapper.classList.add('cm-s-oneliner');
+    cm.on('beforeChange', formatAsSingleLine);
+  } else {
+    cm.display.wrapper.classList.remove('cm-s-oneliner');
+    cm.off('beforeChange', formatAsSingleLine);
+  }
+});

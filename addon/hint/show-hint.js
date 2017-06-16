@@ -306,9 +306,18 @@ function Widget(completion, data) {
   var winH =
     window.innerHeight ||
     Math.max(document.body.offsetHeight, document.documentElement.offsetHeight);
-  (completion.options.container || document.body).appendChild(hints);
-  var box = hints.getBoundingClientRect(),
-    overlapY = box.bottom - winH;
+
+  var root = document.body;
+  if (completion.options.container) {
+    if (typeof completion.options.container === 'string') {
+      root = document.querySelector(completion.options.container);
+    } else {
+      root = completion.options.container;
+    }
+  }
+  root.appendChild(hints);
+  var box = hints.getBoundingClientRect();
+  var overlapY = box.bottom - winH;
   var scrolls = hints.scrollHeight > hints.clientHeight + 1;
   var startScroll = cm.getScrollInfo();
 
@@ -338,9 +347,11 @@ function Widget(completion, data) {
     }
     hints.style.left = (left = pos.left - overlapX) + 'px';
   }
-  if (scrolls)
-    for (var node = hints.firstChild; node; node = node.nextSibling)
+  if (scrolls) {
+    for (var node = hints.firstChild; node; node = node.nextSibling) {
       node.style.paddingRight = cm.display.nativeBarWidth + 'px';
+    }
+  }
 
   cm.addKeyMap(
     (this.keyMap = buildKeyMap(completion, {
@@ -493,14 +504,6 @@ Widget.prototype = {
   }
 };
 
-function applicableHelpers(cm, helpers) {
-  if (!cm.somethingSelected()) return helpers;
-  var result = [];
-  for (var i = 0; i < helpers.length; i++)
-    if (helpers[i].supportsSelection) result.push(helpers[i]);
-  return result;
-}
-
 function fetchHints(hint, cm, options, callback) {
   if (hint.async) {
     hint(cm, callback, options);
@@ -511,65 +514,7 @@ function fetchHints(hint, cm, options, callback) {
   }
 }
 
-function resolveAutoHints(cm, pos) {
-  var helpers = cm.getHelpers(pos, 'hint'),
-    words;
-  if (helpers.length) {
-    var resolved = function(cm, callback, options) {
-      var app = applicableHelpers(cm, helpers);
-      function run(i) {
-        if (i == app.length) return callback(null);
-        fetchHints(app[i], cm, options, function(result) {
-          if (result && result.list.length > 0) callback(result);
-          else run(i + 1);
-        });
-      }
-      run(0);
-    };
-    resolved.async = true;
-    resolved.supportsSelection = true;
-    return resolved;
-  } else if ((words = cm.getHelper(cm.getCursor(), 'hintWords'))) {
-    return function(cm) {
-      return CodeMirror.hint.fromList(cm, { words: words });
-    };
-  } else if (CodeMirror.hint.anyword) {
-    return function(cm, options) {
-      return CodeMirror.hint.anyword(cm, options);
-    };
-  } else {
-    return function() {};
-  }
-}
-
-CodeMirror.registerHelper('hint', 'auto', {
-  resolve: resolveAutoHints
-});
-
-CodeMirror.registerHelper('hint', 'fromList', function(cm, options) {
-  var cur = cm.getCursor(),
-    token = cm.getTokenAt(cur);
-  var to = CodeMirror.Pos(cur.line, token.end);
-  if (token.string && /\w/.test(token.string[token.string.length - 1])) {
-    var term = token.string,
-      from = CodeMirror.Pos(cur.line, token.start);
-  } else {
-    var term = '',
-      from = to;
-  }
-  var found = [];
-  for (var i = 0; i < options.words.length; i++) {
-    var word = options.words[i];
-    if (word.slice(0, term.length) == term) found.push(word);
-  }
-
-  if (found.length) return { list: found, from: from, to: to };
-});
-
-CodeMirror.commands.autocomplete = CodeMirror.showHint;
-
 var defaultOptions = {
-  hint: CodeMirror.hint.auto,
   completeSingle: true,
   alignWithWord: true,
   closeCharacters: /[\s()\[\]{};:>,]/,
