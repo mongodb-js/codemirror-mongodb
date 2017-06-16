@@ -39,7 +39,7 @@ CodeMirror.commands.autocomplete = function(cm) {
     /**
      * So you end up with `{█}` instead of `█{}`
      */
-    if (cursor.ch === 0) {
+    if (!hasOpenBracket && cursor.ch === 0) {
       cursor.ch = 1;
       cm.setCursor(cursor);
     }
@@ -50,10 +50,6 @@ CodeMirror.commands.autocomplete = function(cm) {
 };
 
 CodeMirror.defineOption('mongodb', { fields: { _id: 'ObjectId' }});
-
-CodeMirror.defineInitHook(function(cm) {
-  cm.setOption('hintOptions', {container: cm.display.wrapper.parentNode});
-});
 
 function formatAsSingleLine(cm, change) {
   if (change.update) {
