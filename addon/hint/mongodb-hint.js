@@ -23,6 +23,7 @@ module.exports = function(editor) {
 
 CodeMirror.commands.autocomplete = function(cm) {
   let code = cm.getValue();
+  const cursor = cm.getCursor();
   const hasOpenBracket = _.startsWith(code, '{');
   const hasCloseBracket = _.endsWith(code, '}');
 
@@ -32,10 +33,9 @@ CodeMirror.commands.autocomplete = function(cm) {
   if (!hasCloseBracket) {
     code += '}';
   }
+
   if (!hasOpenBracket || !hasCloseBracket) {
     cm.setValue(code);
-    const cursor = cm.getCursor();
-
     /**
      * So you end up with `{█}` instead of `█{}`
      */
@@ -43,7 +43,14 @@ CodeMirror.commands.autocomplete = function(cm) {
       cursor.ch = 1;
       cm.setCursor(cursor);
     }
+  } else if (code === '{}' && cursor.ch === 2) {
+    /**
+     * So you end up with `{█}` instead of `{}█`
+     */
+    cursor.ch = 1;
+    cm.setCursor(cursor);
   }
+
   process.nextTick(function() {
     CodeMirror.showHint(cm, module.exports);
   });
