@@ -118,7 +118,7 @@ function _generateFields(fields, nestedFields, rootField) {
 CodeMirror.commands.parse = function(cm) {
   const input = cm.getValue();
 
-  const query = parse(input);
+  const query = parse.parseFilter(input);
   debug('parsed query is', query);
 
   const queryStr = EJSON.stringify(query);
@@ -154,7 +154,9 @@ var queryInput = CodeMirror.fromTextArea(document.getElementById('oneliner'), {
   theme: 'mongodb',
   extraKeys: {
     'Ctrl-Space': 'autocomplete',
-    'Shift-Enter': 'parse'
+    'Shift-Enter': 'parse',
+    '.': 'autocomplete',
+    '$': 'autocomplete'
   },
   mongodb: {
     fields: {}
