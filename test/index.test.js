@@ -4,7 +4,7 @@ var _ = require('lodash');
 var HintProvider = require('../');
 
 // var arlo = {
-//   _id: 'ObjectId()',
+//   _id: 'ObjectID()',
 //   name: 'Arlo',
 //   overdue_vet_visits: 0,
 //   toys: [{ _id: 'ball', sythetic: true, color: 'orange' }],
@@ -12,14 +12,14 @@ var HintProvider = require('../');
 // };
 //
 // var basil = {
-//   _id: 'ObjectId()',
+//   _id: 'ObjectID()',
 //   name: 'Basil',
 //   overdue_vet_visits: 1,
 //   toys: [{ _id: 'lobsta', sythetic: true, material: 'fabric', color: 'red' }],
 //   birthday: new Date('2012-07-05')
 // };
 var petFields = {
-  _id: 'ObjectId',
+  _id: 'ObjectID',
   name: 'String',
   toys: 'Array',
   'toys._id': 'String',
@@ -137,7 +137,7 @@ describe('codemirror-mongodb', function() {
     codemirror.describe('{_id: █}', function() {
       var hints = getHints(this.ctx.cm);
       it('should template values based on type', function() {
-        assert.equal(hints.list[0].text, "ObjectId('");
+        assert.equal(hints.list[0].text, "ObjectID('");
       });
     });
 
@@ -190,14 +190,14 @@ describe('codemirror-mongodb', function() {
 
       assert.equal(hp.fields._id.name, '_id');
       assert.equal(hp.fields._id.path, '_id');
-      assert.equal(hp.fields._id.type, 'ObjectId');
+      assert.equal(hp.fields._id.type, 'ObjectID');
     });
 
     it('should expand type strings into a field summary', function() {
-      var hp = new HintProvider({ _id: 'ObjectId', name: 'String' });
+      var hp = new HintProvider({ _id: 'ObjectID', name: 'String' });
       assert.equal(hp.fields._id.name, '_id');
       assert.equal(hp.fields._id.path, '_id');
-      assert.equal(hp.fields._id.type, 'ObjectId');
+      assert.equal(hp.fields._id.type, 'ObjectID');
 
       assert.equal(hp.fields.name.name, 'name');
       assert.equal(hp.fields.name.path, 'name');
@@ -206,12 +206,12 @@ describe('codemirror-mongodb', function() {
 
     it('should accept a field summary', function() {
       var hp = new HintProvider({
-        _id: { name: '_id', path: '_id', type: 'ObjectId' },
+        _id: { name: '_id', path: '_id', type: 'ObjectID' },
         name: { name: 'name', path: 'name', type: 'String' }
       });
       assert.equal(hp.fields._id.name, '_id');
       assert.equal(hp.fields._id.path, '_id');
-      assert.equal(hp.fields._id.type, 'ObjectId');
+      assert.equal(hp.fields._id.type, 'ObjectID');
 
       assert.equal(hp.fields.name.name, 'name');
       assert.equal(hp.fields.name.path, 'name');
