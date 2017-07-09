@@ -118,6 +118,16 @@ describe('codemirror-mongodb', function() {
       });
     });
 
+    codemirror.describe('{ █}', function() {
+      var hints = getHints(this.ctx.cm);
+      it('should have hints', function() {
+        assert(hints.list.length);
+      });
+      it('should recommend all fields', function() {
+        assert.equal(hints.list.length, Object.keys(petFields).length);
+      });
+    });
+
     codemirror.describe('{_id█}', function() {
       var hints = getHints(this.ctx.cm);
       it('should recommend : for the _id field', function() {
@@ -127,6 +137,22 @@ describe('codemirror-mongodb', function() {
     });
 
     codemirror.describe('{_id:█}', function() {
+      var hints = getHints(this.ctx.cm);
+      it('should recommend operators only', function() {
+        var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
+        assert.equal(operatorHints.length, hints.list.length);
+      });
+    });
+
+    codemirror.describe('{na: █}', function() {
+      var hints = getHints(this.ctx.cm);
+      it('should recommend operators only', function() {
+        var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
+        assert.equal(operatorHints.length, hints.list.length);
+      });
+    });
+
+    codemirror.describe('{name: { █}}', function() {
       var hints = getHints(this.ctx.cm);
       it('should recommend operators only', function() {
         var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
