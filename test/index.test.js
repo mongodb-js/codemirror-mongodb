@@ -107,12 +107,15 @@ describe('codemirror-mongodb', function() {
       });
     });
   });
+
   describe('mongodb hint', function() {
     codemirror.describe('{█}', function() {
       var hints = getHints(this.ctx.cm);
+
       it('should have hints', function() {
         assert(hints.list.length);
       });
+
       it('should recommend all fields', function() {
         assert.equal(hints.list.length, Object.keys(petFields).length);
       });
@@ -120,95 +123,285 @@ describe('codemirror-mongodb', function() {
 
     codemirror.describe('{ █}', function() {
       var hints = getHints(this.ctx.cm);
+
       it('should have hints', function() {
         assert(hints.list.length);
       });
+
       it('should recommend all fields', function() {
         assert.equal(hints.list.length, Object.keys(petFields).length);
       });
     });
 
-    codemirror.describe('{_id█}', function() {
+    codemirror.describe('{     █}', function() {
       var hints = getHints(this.ctx.cm);
-      it('should recommend : for the _id field', function() {
-        assert.equal(hints.list.length, 1);
-        assert.equal(hints.list[0].text, '_id: ');
+
+      it('should have hints', function() {
+        assert(hints.list.length);
+      });
+
+      it('should recommend all fields', function() {
+        assert.equal(hints.list.length, Object.keys(petFields).length);
       });
     });
 
-    codemirror.describe('{_id:█}', function() {
+    codemirror.describe('{a    █}', function() {
       var hints = getHints(this.ctx.cm);
-      it('should recommend operators only', function() {
-        var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
-        assert.equal(operatorHints.length, hints.list.length);
-      });
-    });
 
-    codemirror.describe('{na: █}', function() {
-      var hints = getHints(this.ctx.cm);
-      it('should recommend operators only', function() {
-        var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
-        assert.equal(operatorHints.length, hints.list.length);
-      });
-    });
-
-    codemirror.describe('{name: { █}}', function() {
-      var hints = getHints(this.ctx.cm);
-      it('should recommend operators only', function() {
-        var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
-        assert.equal(operatorHints.length, hints.list.length);
-      });
-    });
-
-    codemirror.describe('{_id: █}', function() {
-      var hints = getHints(this.ctx.cm);
-      it('should template values based on type', function() {
-        assert.equal(hints.list[0].text, "ObjectID('");
+      it('should not have hints', function() {
+        assert.equal(hints.list.length, 0);
       });
     });
 
     codemirror.describe('{na█}', function() {
       var hints = getHints(this.ctx.cm);
-      it('should recommend the name field', function() {
-        assert.equal(hints.list.length, 1);
+
+      it('recommends the matching field', function() {
         assert.equal(hints.list[0].text, 'name');
       });
     });
 
-    codemirror.describe('{_id: {$exists: true}, █}', function() {
+    codemirror.describe('{ na█}', function() {
       var hints = getHints(this.ctx.cm);
-      it('should recommend field names other than _id', function() {
-        var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
-        assert.equal(operatorHints.length, 0, 'should not have operators');
-        assert(hints.list.length, 'should have hints');
+
+      it('recommends the matching field', function() {
         assert.equal(hints.list[0].text, 'name');
+      });
+    });
+
+    codemirror.describe('{     na█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('recommends the matching field', function() {
+        assert.equal(hints.list[0].text, 'name');
+      });
+    });
+
+    codemirror.describe('{ n    na█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('has no recommendations', function() {
+        assert.equal(hints.list.length, 0);
       });
     });
 
     codemirror.describe('{name: {█}}', function() {
       var hints = getHints(this.ctx.cm);
+      var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
 
-      it('should only recommend operators', function() {
-        var fieldNameHints = hints.list.filter(h => h.text.charAt(0) !== '$');
-        assert.equal(fieldNameHints.length, 0, 'should not have fieldNames');
-        assert(hints.list.length, 'should have hints');
+      it('recommends all the operators', function() {
+        assert.equal(operatorHints.length, 12);
+      });
+
+      it('only recommends operators', function() {
+        assert.equal(hints.list.length, 12);
+      });
+    });
+
+    codemirror.describe('{ name: { █}}', function() {
+      var hints = getHints(this.ctx.cm);
+      var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
+
+      it('recommends all the operators', function() {
+        assert.equal(operatorHints.length, 12);
+      });
+
+      it('only recommends operators', function() {
+        assert.equal(hints.list.length, 12);
+      });
+    });
+
+    codemirror.describe('{     name: {     █}}', function() {
+      var hints = getHints(this.ctx.cm);
+      var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
+
+      it('recommends all the operators', function() {
+        assert.equal(operatorHints.length, 12);
+      });
+
+      it('only recommends operators', function() {
+        assert.equal(hints.list.length, 12);
+      });
+    });
+
+    codemirror.describe('{name: { $g█}}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('recommends matching operators', function() {
         assert.equal(hints.list[0].text, '$gte');
+        assert.equal(hints.list[1].text, '$gt');
+        assert.equal(hints.list.length, 2);
+      });
+    });
+
+    codemirror.describe('{name: { $gte█}}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('adds the : plus space for exact match with only 1 remaining result', function() {
+        assert.equal(hints.list.length, 1);
+        assert.equal(hints.list[0].text, '$gte');
+      });
+    });
+
+    codemirror.describe('{name: {      $gte█}}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('adds the : plus space for exact match with only 1 remaining result', function() {
+        assert.equal(hints.list.length, 1);
+        assert.equal(hints.list[0].text, '$gte');
+      });
+    });
+
+    codemirror.describe('{$g█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('does not recommend operators', function() {
+        assert.equal(hints.list.length, 0);
+      });
+    });
+
+    codemirror.describe('{name:█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('should not recommend operators', function() {
+        assert.equal(hints.list.length, 0);
+      });
+    });
+
+    codemirror.describe('{name█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('returns the only result', function() {
+        assert.equal(hints.list.length, 1);
+        assert.equal(hints.list[0].text, 'name');
+      });
+    });
+
+    codemirror.describe('{     name█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('returns the only result', function() {
+        assert.equal(hints.list.length, 1);
+        assert.equal(hints.list[0].text, 'name');
+      });
+    });
+
+    codemirror.describe('{.█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('does not lists any suggestions', function() {
+        assert.equal(hints.list.length, 0);
+      });
+    });
+
+    codemirror.describe('{toys.█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('lists all subfield suggestions', function() {
+        assert.equal(hints.list.length, 4);
       });
     });
 
     codemirror.describe('{toys._i█}', function() {
       var hints = getHints(this.ctx.cm);
-      it('should escape subdocument property paths', function() {
+      it('escapes subdocument property paths', function() {
         assert.equal(hints.list[0].text, "'toys._id'");
       });
     });
+
+    codemirror.describe('{   toys._i█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('escapes subdocument property paths', function() {
+        assert.equal(hints.list[0].text, "'toys._id'");
+      });
+    });
+
+    codemirror.describe('{ toys.co█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('escapes subdocument property paths', function() {
+        assert.equal(hints.list[0].text, "'toys.color'");
+      });
+    });
+
+    codemirror.describe('{_id: {$exists: true}, █}', function() {
+      var hints = getHints(this.ctx.cm);
+      var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
+
+      it('recommends field names other than _id', function() {
+        assert.equal(hints.list[0].text, 'name');
+      });
+
+      it('does not include operators', function() {
+        assert.equal(operatorHints.length, 0, 'should not have operators');
+      });
+    });
+
+    codemirror.describe('{_id: █}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('returns a list of types', function() {
+        assert.equal(hints.list.length, 10);
+        assert.equal(hints.list[0].text, 'BSONDate');
+      });
+    });
+
+    codemirror.describe('{_id:     █}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('returns a list of types', function() {
+        assert.equal(hints.list.length, 10);
+        assert.equal(hints.list[0].text, 'BSONDate');
+      });
+    });
+
+    codemirror.describe('{_id:█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('does not hint with invalid syntax', function() {
+        assert.equal(hints.list.length, 0);
+      });
+    });
+
+    codemirror.describe('{_id: Obje█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('returns a list of types', function() {
+        assert.equal(hints.list.length, 1);
+        assert.equal(hints.list[0].text, 'ObjectId');
+      });
+    });
+
+    codemirror.describe('{_id:   Obje█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('returns a list of types', function() {
+        assert.equal(hints.list.length, 1);
+        assert.equal(hints.list[0].text, 'ObjectId');
+      });
+    });
+
+    // @note: Durran: The mock codemirror used in the tests is not properly
+    //   setting up the cursor when quotes are used, as the javascript run
+    //   mode escapes the string and the token position becomes off by 1.
     // codemirror.describe("{name: 'lucas█}", function() {
-    //   var hints = getHints(this.ctx.cm);
-    //   it('should recommend closing the quote', function() {
-    //     assert.equal(hints.list[0].text, "'lucas'");
-    //   });
+      // var hints = getHints(this.ctx.cm);
+
+      // it('should recommend closing the quote', function() {
+        // assert.equal(hints.list[0].text, "'lucas'");
+      // });
+    // });
+
+    // codemirror.describe("{name:     'lucas█}", function() {
+      // var hints = getHints(this.ctx.cm);
+
+      // it('should recommend closing the quote', function() {
+        // assert.equal(hints.list[0].text, "'lucas'");
+      // });
     // });
   });
+
   describe('fields', function() {
     it('should default to a single _id field', function() {
       var hp = new HintProvider();
