@@ -231,10 +231,10 @@ function getText(completion) {
     return completion;
   }
   const defaultText = `${completion.text}: `;
-  if (completion.kind === OPERATORS) {
+  if (completion.type === OPERATORS) {
     return OPERATOR_MAPPINGS[completion.text] || defaultText;
   }
-  if (completion.kind === VALUES) {
+  if (completion.type === VALUES) {
     return VALUE_MAPPINGS[completion.text] || defaultText;
   }
   return defaultText;
