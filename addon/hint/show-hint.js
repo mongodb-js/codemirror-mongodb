@@ -199,6 +199,7 @@ function getText(completion) {
   if (typeof completion === 'string') {
     return completion;
   }
+  // @todo: Durran: Look at the type of completion and decorate if necessary.
   return completion.text;
 }
 

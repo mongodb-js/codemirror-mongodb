@@ -239,7 +239,7 @@ describe('codemirror-mongodb', function() {
 
       it('adds the : plus space for exact match with only 1 remaining result', function() {
         assert.equal(hints.list.length, 1);
-        assert.equal(hints.list[0].text, '$gte: ');
+        assert.equal(hints.list[0].text, '$gte');
       });
     });
 
@@ -248,7 +248,7 @@ describe('codemirror-mongodb', function() {
 
       it('adds the : plus space for exact match with only 1 remaining result', function() {
         assert.equal(hints.list.length, 1);
-        assert.equal(hints.list[0].text, '$gte: ');
+        assert.equal(hints.list[0].text, '$gte');
       });
     });
 
@@ -271,18 +271,18 @@ describe('codemirror-mongodb', function() {
     codemirror.describe('{name█}', function() {
       var hints = getHints(this.ctx.cm);
 
-      it('adds the : plus space for exact match with only 1 remaining result', function() {
+      it('returns the only result', function() {
         assert.equal(hints.list.length, 1);
-        assert.equal(hints.list[0].text, 'name: ');
+        assert.equal(hints.list[0].text, 'name');
       });
     });
 
     codemirror.describe('{     name█}', function() {
       var hints = getHints(this.ctx.cm);
 
-      it('adds the : plus space for exact match with only 1 remaining result', function() {
+      it('returns the only result', function() {
         assert.equal(hints.list.length, 1);
-        assert.equal(hints.list[0].text, 'name: ');
+        assert.equal(hints.list[0].text, 'name');
       });
     });
 
@@ -337,15 +337,6 @@ describe('codemirror-mongodb', function() {
         assert.equal(operatorHints.length, 0, 'should not have operators');
       });
     });
-
-    // // @todo: Durran: Not in current behaviour but would be consistent.
-    // codemirror.describe('{ toys.color█}', function() {
-      // var hints = getHints(this.ctx.cm);
-
-      // it('escapes subdocument property paths and adds : for exact result', function() {
-        // assert.equal(hints.list[0].text, "'toys.color': ");
-      // });
-    // });
 
     codemirror.describe('{_id: █}', function() {
       var hints = getHints(this.ctx.cm);
