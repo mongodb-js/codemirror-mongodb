@@ -352,7 +352,7 @@ describe('codemirror-mongodb', function() {
 
       it('returns a list of types', function() {
         assert.equal(hints.list.length, 10);
-        assert.equal(hints.list[0].text, "BSONDate");
+        assert.equal(hints.list[0].text, 'BSONDate');
       });
     });
 
@@ -361,7 +361,7 @@ describe('codemirror-mongodb', function() {
 
       it('returns a list of types', function() {
         assert.equal(hints.list.length, 10);
-        assert.equal(hints.list[0].text, "BSONDate");
+        assert.equal(hints.list[0].text, 'BSONDate');
       });
     });
 
@@ -370,6 +370,24 @@ describe('codemirror-mongodb', function() {
 
       it('does not hint with invalid syntax', function() {
         assert.equal(hints.list.length, 0);
+      });
+    });
+
+    codemirror.describe('{_id: Obje█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('returns a list of types', function() {
+        assert.equal(hints.list.length, 1);
+        assert.equal(hints.list[0].text, 'ObjectId');
+      });
+    });
+
+    codemirror.describe('{_id:   Obje█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('returns a list of types', function() {
+        assert.equal(hints.list.length, 1);
+        assert.equal(hints.list[0].text, 'ObjectId');
       });
     });
 
