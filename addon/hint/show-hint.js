@@ -9,6 +9,37 @@ var CodeMirror = require('codemirror');
 var HINT_ELEMENT_CLASS = 'CodeMirror-hint';
 var ACTIVE_HINT_ELEMENT_CLASS = 'CodeMirror-hint-active';
 
+const OPERATORS = 'operators';
+const VALUES = 'values';
+
+const OPERATOR_MAPPINGS = {
+  '$gte': '$gte: ',
+  '$gt': '$gt: ',
+  '$lte': '$lte: ',
+  '$lt': '$lt: ',
+  '$eq': '$eq: ',
+  '$ne': '$ne: ',
+  '$type': '$type: ',
+  '$size': '$size: ',
+  '$exists': '$exists: ',
+  '$in': '$in: []',
+  '$nin': '$nin: []',
+  '$all': '$all: []'
+};
+
+const VALUE_MAPPINGS = {
+  'BSONDate': "BSONDate('",
+  'Binary': "Binary('",
+  'Code': "Code('",
+  'MaxKey': 'MaxKey()',
+  'MinKey': 'MinKey()',
+  'NumberDecimal': "NumberDecimal('",
+  'NumberLong': 'NumberLong(',
+  'ObjectId': "ObjectId('",
+  'RegExp': "RegExp('",
+  'Timestamp': 'Timestamp("
+};
+
 // This is the old interface, kept around for now to stay
 // backwards-compatible.
 CodeMirror.showHint = function(cm, getHints, options) {
@@ -199,8 +230,14 @@ function getText(completion) {
   if (typeof completion === 'string') {
     return completion;
   }
-  // @todo: Durran: Look at the type of completion and decorate if necessary.
-  return completion.text;
+  const defaultText = `${completion.text}: `;
+  if (completion.kind === OPERATORS) {
+    return OPERATOR_MAPPINGS[completion.text] || defaultText;
+  }
+  if (completion.kind === VALUES) {
+    return VALUE_MAPPINGS[completion.text] || defaultText;
+  }
+  return defaultText;
 }
 
 function buildKeyMap(completion, handle) {
