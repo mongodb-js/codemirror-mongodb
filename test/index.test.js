@@ -347,13 +347,31 @@ describe('codemirror-mongodb', function() {
       // });
     // });
 
-    // codemirror.describe('{_id: █}', function() {
-      // var hints = getHints(this.ctx.cm);
+    codemirror.describe('{_id: █}', function() {
+      var hints = getHints(this.ctx.cm);
 
-      // it('should template values based on type', function() {
-        // assert.equal(hints.list[0].text, "ObjectID('");
-      // });
-    // });
+      it('returns a list of types', function() {
+        assert.equal(hints.list.length, 10);
+        assert.equal(hints.list[0].text, "BSONDate");
+      });
+    });
+
+    codemirror.describe('{_id:     █}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('returns a list of types', function() {
+        assert.equal(hints.list.length, 10);
+        assert.equal(hints.list[0].text, "BSONDate");
+      });
+    });
+
+    codemirror.describe('{_id:█}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('does not hint with invalid syntax', function() {
+        assert.equal(hints.list.length, 0);
+      });
+    });
 
     // codemirror.describe("{name: 'lucas█}", function() {
     //   var hints = getHints(this.ctx.cm);
