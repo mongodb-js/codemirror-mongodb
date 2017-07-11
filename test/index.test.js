@@ -391,11 +391,23 @@ describe('codemirror-mongodb', function() {
       });
     });
 
+    // @note: Durran: The mock codemirror used in the tests is not properly
+    //   setting up the cursor when quotes are used, as the javascript run
+    //   mode escapes the string and the token position becomes off by 1.
     // codemirror.describe("{name: 'lucas█}", function() {
-    //   var hints = getHints(this.ctx.cm);
-    //   it('should recommend closing the quote', function() {
-    //     assert.equal(hints.list[0].text, "'lucas'");
-    //   });
+      // var hints = getHints(this.ctx.cm);
+
+      // it('should recommend closing the quote', function() {
+        // assert.equal(hints.list[0].text, "'lucas'");
+      // });
+    // });
+
+    // codemirror.describe("{name:     'lucas█}", function() {
+      // var hints = getHints(this.ctx.cm);
+
+      // it('should recommend closing the quote', function() {
+        // assert.equal(hints.list[0].text, "'lucas'");
+      // });
     // });
   });
 
