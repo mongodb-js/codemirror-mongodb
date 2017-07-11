@@ -30,7 +30,6 @@ const OPERATOR_MAPPINGS = {
 const VALUE_MAPPINGS = {
   'BSONDate': "BSONDate('",
   'Binary': "Binary('",
-  'Code': "Code('",
   'MaxKey': 'MaxKey()',
   'MinKey': 'MinKey()',
   'NumberDecimal': "NumberDecimal('",
