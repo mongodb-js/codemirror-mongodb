@@ -37,7 +37,7 @@ const VALUE_MAPPINGS = {
   'NumberLong': 'NumberLong(',
   'ObjectId': "ObjectId('",
   'RegExp': "RegExp('",
-  'Timestamp': 'Timestamp("
+  'Timestamp': 'Timestamp('
 };
 
 // This is the old interface, kept around for now to stay
