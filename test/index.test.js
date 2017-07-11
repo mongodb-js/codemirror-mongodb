@@ -119,6 +119,10 @@ describe('codemirror-mongodb', function() {
       it('should recommend all fields', function() {
         assert.equal(hints.list.length, Object.keys(petFields).length);
       });
+
+      it('moves the from position + 1', function() {
+        assert.equal(hints.from.ch, 1);
+      });
     });
 
     codemirror.describe('{ █}', function() {
@@ -131,6 +135,10 @@ describe('codemirror-mongodb', function() {
       it('should recommend all fields', function() {
         assert.equal(hints.list.length, Object.keys(petFields).length);
       });
+
+      it('moves the from position + 1', function() {
+        assert.equal(hints.from.ch, 2);
+      });
     });
 
     codemirror.describe('{     █}', function() {
@@ -142,6 +150,10 @@ describe('codemirror-mongodb', function() {
 
       it('should recommend all fields', function() {
         assert.equal(hints.list.length, Object.keys(petFields).length);
+      });
+
+      it('moves the from position + 1', function() {
+        assert.equal(hints.from.ch, 2);
       });
     });
 
@@ -159,6 +171,10 @@ describe('codemirror-mongodb', function() {
       it('recommends the matching field', function() {
         assert.equal(hints.list[0].text, 'name');
       });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 1);
+      });
     });
 
     codemirror.describe('{ na█}', function() {
@@ -167,6 +183,10 @@ describe('codemirror-mongodb', function() {
       it('recommends the matching field', function() {
         assert.equal(hints.list[0].text, 'name');
       });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 2);
+      });
     });
 
     codemirror.describe('{     na█}', function() {
@@ -174,6 +194,10 @@ describe('codemirror-mongodb', function() {
 
       it('recommends the matching field', function() {
         assert.equal(hints.list[0].text, 'name');
+      });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 6);
       });
     });
 
@@ -196,6 +220,10 @@ describe('codemirror-mongodb', function() {
       it('only recommends operators', function() {
         assert.equal(hints.list.length, 12);
       });
+
+      it('moves the from position', function() {
+        assert.equal(hints.from.ch, 8);
+      });
     });
 
     codemirror.describe('{ name: { █}}', function() {
@@ -208,6 +236,10 @@ describe('codemirror-mongodb', function() {
 
       it('only recommends operators', function() {
         assert.equal(hints.list.length, 12);
+      });
+
+      it('moves the from position', function() {
+        assert.equal(hints.from.ch, 10);
       });
     });
 
@@ -222,6 +254,10 @@ describe('codemirror-mongodb', function() {
       it('only recommends operators', function() {
         assert.equal(hints.list.length, 12);
       });
+
+      it('moves the from position', function() {
+        assert.equal(hints.from.ch, 14);
+      });
     });
 
     codemirror.describe('{name: { $g█}}', function() {
@@ -232,23 +268,35 @@ describe('codemirror-mongodb', function() {
         assert.equal(hints.list[1].text, '$gt');
         assert.equal(hints.list.length, 2);
       });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 9);
+      });
     });
 
     codemirror.describe('{name: { $gte█}}', function() {
       var hints = getHints(this.ctx.cm);
 
-      it('adds the : plus space for exact match with only 1 remaining result', function() {
+      it('returns the result', function() {
         assert.equal(hints.list.length, 1);
         assert.equal(hints.list[0].text, '$gte');
+      });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 9);
       });
     });
 
     codemirror.describe('{name: {      $gte█}}', function() {
       var hints = getHints(this.ctx.cm);
 
-      it('adds the : plus space for exact match with only 1 remaining result', function() {
+      it('returns the result', function() {
         assert.equal(hints.list.length, 1);
         assert.equal(hints.list[0].text, '$gte');
+      });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 14);
       });
     });
 
@@ -257,6 +305,10 @@ describe('codemirror-mongodb', function() {
 
       it('does not recommend operators', function() {
         assert.equal(hints.list.length, 0);
+      });
+
+      it('moves the from position + 1', function() {
+        assert.equal(hints.from.ch, 1);
       });
     });
 
@@ -275,6 +327,10 @@ describe('codemirror-mongodb', function() {
         assert.equal(hints.list.length, 1);
         assert.equal(hints.list[0].text, 'name');
       });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 1);
+      });
     });
 
     codemirror.describe('{     name█}', function() {
@@ -283,6 +339,10 @@ describe('codemirror-mongodb', function() {
       it('returns the only result', function() {
         assert.equal(hints.list.length, 1);
         assert.equal(hints.list[0].text, 'name');
+      });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 6);
       });
     });
 
@@ -300,12 +360,20 @@ describe('codemirror-mongodb', function() {
       it('lists all subfield suggestions', function() {
         assert.equal(hints.list.length, 4);
       });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 5);
+      });
     });
 
     codemirror.describe('{toys._i█}', function() {
       var hints = getHints(this.ctx.cm);
       it('escapes subdocument property paths', function() {
         assert.equal(hints.list[0].text, "'toys._id'");
+      });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 6);
       });
     });
 
@@ -315,6 +383,10 @@ describe('codemirror-mongodb', function() {
       it('escapes subdocument property paths', function() {
         assert.equal(hints.list[0].text, "'toys._id'");
       });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 9);
+      });
     });
 
     codemirror.describe('{ toys.co█}', function() {
@@ -322,6 +394,10 @@ describe('codemirror-mongodb', function() {
 
       it('escapes subdocument property paths', function() {
         assert.equal(hints.list[0].text, "'toys.color'");
+      });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 7);
       });
     });
 
@@ -336,6 +412,10 @@ describe('codemirror-mongodb', function() {
       it('does not include operators', function() {
         assert.equal(operatorHints.length, 0, 'should not have operators');
       });
+
+      it('moves the from position + 1', function() {
+        assert.equal(hints.from.ch, 23);
+      });
     });
 
     codemirror.describe('{_id: █}', function() {
@@ -345,6 +425,10 @@ describe('codemirror-mongodb', function() {
         assert.equal(hints.list.length, 10);
         assert.equal(hints.list[0].text, 'BSONDate');
       });
+
+      it('moves the from position + 1', function() {
+        assert.equal(hints.from.ch, 6);
+      });
     });
 
     codemirror.describe('{_id:     █}', function() {
@@ -353,6 +437,10 @@ describe('codemirror-mongodb', function() {
       it('returns a list of types', function() {
         assert.equal(hints.list.length, 10);
         assert.equal(hints.list[0].text, 'BSONDate');
+      });
+
+      it('moves the from position + 1', function() {
+        assert.equal(hints.from.ch, 6);
       });
     });
 
@@ -371,6 +459,10 @@ describe('codemirror-mongodb', function() {
         assert.equal(hints.list.length, 1);
         assert.equal(hints.list[0].text, 'ObjectId');
       });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 6);
+      });
     });
 
     codemirror.describe('{_id:   Obje█}', function() {
@@ -380,26 +472,11 @@ describe('codemirror-mongodb', function() {
         assert.equal(hints.list.length, 1);
         assert.equal(hints.list[0].text, 'ObjectId');
       });
+
+      it('keeps the from position', function() {
+        assert.equal(hints.from.ch, 8);
+      });
     });
-
-    // @note: Durran: The mock codemirror used in the tests is not properly
-    //   setting up the cursor when quotes are used, as the javascript run
-    //   mode escapes the string and the token position becomes off by 1.
-    // codemirror.describe("{name: 'lucas█}", function() {
-      // var hints = getHints(this.ctx.cm);
-
-      // it('should recommend closing the quote', function() {
-        // assert.equal(hints.list[0].text, "'lucas'");
-      // });
-    // });
-
-    // codemirror.describe("{name:     'lucas█}", function() {
-      // var hints = getHints(this.ctx.cm);
-
-      // it('should recommend closing the quote', function() {
-        // assert.equal(hints.list[0].text, "'lucas'");
-      // });
-    // });
   });
 
   describe('fields', function() {
