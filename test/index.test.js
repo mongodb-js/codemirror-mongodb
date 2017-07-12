@@ -325,10 +325,22 @@ describe('codemirror-mongodb', function() {
       });
     });
 
+    codemirror.describe('{name: {$gte: 5█}}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('does not recommend values', function() {
+        assert.equal(hints.list.length, 0);
+      });
+
+      it('moves the from position + 1', function() {
+        assert.equal(hints.from.ch, 14);
+      });
+    });
+
     codemirror.describe('{name: {$in: [█]}}', function() {
       var hints = getHints(this.ctx.cm);
 
-      it('does not recommend operators', function() {
+      it('recommends values', function() {
         assert.equal(hints.list.length, 9);
         assert.equal(hints.list[0].text, 'BSONDate');
       });
@@ -341,7 +353,7 @@ describe('codemirror-mongodb', function() {
     codemirror.describe('{name: {$in: [ █]}}', function() {
       var hints = getHints(this.ctx.cm);
 
-      it('does not recommend operators', function() {
+      it('recommends values', function() {
         assert.equal(hints.list.length, 9);
         assert.equal(hints.list[0].text, 'BSONDate');
       });
@@ -354,7 +366,7 @@ describe('codemirror-mongodb', function() {
     codemirror.describe('{name: {$in: [     █]}}', function() {
       var hints = getHints(this.ctx.cm);
 
-      it('does not recommend operators', function() {
+      it('recommends values', function() {
         assert.equal(hints.list.length, 9);
         assert.equal(hints.list[0].text, 'BSONDate');
       });
@@ -364,10 +376,34 @@ describe('codemirror-mongodb', function() {
       });
     });
 
+    codemirror.describe('{name: {$in: []█}}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('does not recommend values', function() {
+        assert.equal(hints.list.length, 0);
+      });
+
+      it('keeps the position', function() {
+        assert.equal(hints.from.ch, 14);
+      });
+    });
+
+    codemirror.describe('{name: {$in: █[]}}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('does not recommend values', function() {
+        assert.equal(hints.list.length, 0);
+      });
+
+      it('keeps the position', function() {
+        assert.equal(hints.from.ch, 12);
+      });
+    });
+
     codemirror.describe('{name: {$in: [ BSON█]}}', function() {
       var hints = getHints(this.ctx.cm);
 
-      it('does not recommend operators', function() {
+      it('recommends values', function() {
         assert.equal(hints.list.length, 1);
         assert.equal(hints.list[0].text, 'BSONDate');
       });
