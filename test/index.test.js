@@ -312,6 +312,19 @@ describe('codemirror-mongodb', function() {
       });
     });
 
+    codemirror.describe('{name: {$gte: █}}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('does not recommend operators', function() {
+        assert.equal(hints.list.length, 9);
+        assert.equal(hints.list[0].text, 'BSONDate');
+      });
+
+      it('moves the from position + 1', function() {
+        assert.equal(hints.from.ch, 14);
+      });
+    });
+
     codemirror.describe('{name:█}', function() {
       var hints = getHints(this.ctx.cm);
 
@@ -422,7 +435,7 @@ describe('codemirror-mongodb', function() {
       var hints = getHints(this.ctx.cm);
 
       it('returns a list of types', function() {
-        assert.equal(hints.list.length, 10);
+        assert.equal(hints.list.length, 9);
         assert.equal(hints.list[0].text, 'BSONDate');
       });
 
@@ -435,7 +448,7 @@ describe('codemirror-mongodb', function() {
       var hints = getHints(this.ctx.cm);
 
       it('returns a list of types', function() {
-        assert.equal(hints.list.length, 10);
+        assert.equal(hints.list.length, 9);
         assert.equal(hints.list[0].text, 'BSONDate');
       });
 
