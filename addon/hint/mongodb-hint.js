@@ -10,7 +10,7 @@ const _ = require('lodash');
 
 module.exports = function(editor) {
   const opts = editor.getOption('mongodb');
-  const hinter = new MongoDBHintProvider(opts.fields);
+  const hinter = new MongoDBHintProvider(opts);
   const res = hinter.execute(editor);
   debug('Hint Provider Results (%d)', res.list.length);
   debug('  _case', res._case);

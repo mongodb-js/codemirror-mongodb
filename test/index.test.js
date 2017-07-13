@@ -30,8 +30,8 @@ var petFields = {
   birthday: 'Date'
 };
 
-var getHints = function(cm) {
-  return new HintProvider(petFields).execute(cm);
+const getHints = (cm, options = { fields: petFields, input: 'filter' }) => {
+  return new HintProvider(options).execute(cm);
 };
 
 describe('codemirror-mongodb', function() {
@@ -578,6 +578,63 @@ describe('codemirror-mongodb', function() {
         assert.equal(hints.from.ch, 8);
       });
     });
+
+    context('when hinting on a project input', function() {
+      codemirror.describe('{█}', function() {
+        var hints = getHints(this.ctx.cm, { fields: petFields, input: 'project' });
+
+        it('returns a list of fields', function() {
+          assert.equal(hints.list.length, 9);
+          assert.equal(hints.list[0].text, '_id');
+        });
+
+        it('moves the from position + 1', function() {
+          assert.equal(hints.from.ch, 1);
+        });
+      });
+
+      codemirror.describe('{ █}', function() {
+        var hints = getHints(this.ctx.cm, { fields: petFields, input: 'project' });
+
+        it('returns a list of fields', function() {
+          assert.equal(hints.list.length, 9);
+          assert.equal(hints.list[0].text, '_id');
+        });
+
+        it('moves the from position + 1', function() {
+          assert.equal(hints.from.ch, 2);
+        });
+      });
+
+      codemirror.describe('{ na█}', function() {
+        var hints = getHints(this.ctx.cm, { fields: petFields, input: 'project' });
+
+        it('returns a list of fields', function() {
+          assert.equal(hints.list.length, 1);
+          assert.equal(hints.list[0].text, 'name');
+        });
+
+        it('keeps the position', function() {
+          assert.equal(hints.from.ch, 2);
+        });
+      });
+
+      codemirror.describe('{ name: █}', function() {
+        var hints = getHints(this.ctx.cm, { fields: petFields, input: 'project' });
+
+        it('does not hint anything', function() {
+          assert.equal(hints.list.length, 0);
+        });
+
+        it('keeps the position', function() {
+          assert.equal(hints.from.ch, 7);
+        });
+      });
+    });
+
+    context('when hinting on a sort input', function() {
+
+    });
   });
 
   describe('fields', function() {
@@ -587,14 +644,14 @@ describe('codemirror-mongodb', function() {
 
       assert.equal(hp.fields._id.name, '_id');
       assert.equal(hp.fields._id.path, '_id');
-      assert.equal(hp.fields._id.type, 'ObjectID');
+      assert.equal(hp.fields._id.type, 'ObjectId');
     });
 
     it('should expand type strings into a field summary', function() {
-      var hp = new HintProvider({ _id: 'ObjectID', name: 'String' });
+      var hp = new HintProvider({ fields: { _id: 'ObjectId', name: 'String' }, input: 'filter' });
       assert.equal(hp.fields._id.name, '_id');
       assert.equal(hp.fields._id.path, '_id');
-      assert.equal(hp.fields._id.type, 'ObjectID');
+      assert.equal(hp.fields._id.type, 'ObjectId');
 
       assert.equal(hp.fields.name.name, 'name');
       assert.equal(hp.fields.name.path, 'name');
@@ -603,12 +660,15 @@ describe('codemirror-mongodb', function() {
 
     it('should accept a field summary', function() {
       var hp = new HintProvider({
-        _id: { name: '_id', path: '_id', type: 'ObjectID' },
-        name: { name: 'name', path: 'name', type: 'String' }
+        fields: {
+          _id: { name: '_id', path: '_id', type: 'ObjectId' },
+          name: { name: 'name', path: 'name', type: 'String' }
+        },
+        input: 'filter'
       });
       assert.equal(hp.fields._id.name, '_id');
       assert.equal(hp.fields._id.path, '_id');
-      assert.equal(hp.fields._id.type, 'ObjectID');
+      assert.equal(hp.fields._id.type, 'ObjectId');
 
       assert.equal(hp.fields.name.name, 'name');
       assert.equal(hp.fields.name.path, 'name');
