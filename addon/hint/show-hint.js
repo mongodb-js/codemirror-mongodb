@@ -9,6 +9,20 @@ var CodeMirror = require('codemirror');
 var HINT_ELEMENT_CLASS = 'CodeMirror-hint';
 var ACTIVE_HINT_ELEMENT_CLASS = 'CodeMirror-hint-active';
 
+const VALUES = 'values';
+
+const VALUE_MAPPINGS = {
+  'BSONDate': "BSONDate('",
+  'Binary': "Binary('",
+  'MaxKey': 'MaxKey()',
+  'MinKey': 'MinKey()',
+  'NumberDecimal': "NumberDecimal('",
+  'NumberLong': 'NumberLong(',
+  'ObjectId': "ObjectId('",
+  'RegExp': "RegExp('",
+  'Timestamp': 'Timestamp('
+};
+
 // This is the old interface, kept around for now to stay
 // backwards-compatible.
 CodeMirror.showHint = function(cm, getHints, options) {
@@ -198,6 +212,9 @@ function parseOptions(cm, pos, options) {
 function getText(completion) {
   if (typeof completion === 'string') {
     return completion;
+  }
+  if (completion.type === VALUES) {
+    return VALUE_MAPPINGS[completion.text] || completion.text;
   }
   return completion.text;
 }
