@@ -214,11 +214,11 @@ describe('codemirror-mongodb', function() {
       var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
 
       it('recommends all the operators', function() {
-        assert.equal(operatorHints.length, 12);
+        assert.equal(operatorHints.length, 13);
       });
 
       it('only recommends operators', function() {
-        assert.equal(hints.list.length, 12);
+        assert.equal(hints.list.length, 13);
       });
 
       it('moves the from position', function() {
@@ -231,11 +231,11 @@ describe('codemirror-mongodb', function() {
       var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
 
       it('recommends all the operators', function() {
-        assert.equal(operatorHints.length, 12);
+        assert.equal(operatorHints.length, 13);
       });
 
       it('only recommends operators', function() {
-        assert.equal(hints.list.length, 12);
+        assert.equal(hints.list.length, 13);
       });
 
       it('moves the from position', function() {
@@ -248,11 +248,11 @@ describe('codemirror-mongodb', function() {
       var operatorHints = hints.list.filter(h => h.text.charAt(0) === '$');
 
       it('recommends all the operators', function() {
-        assert.equal(operatorHints.length, 12);
+        assert.equal(operatorHints.length, 13);
       });
 
       it('only recommends operators', function() {
-        assert.equal(hints.list.length, 12);
+        assert.equal(hints.list.length, 13);
       });
 
       it('moves the from position', function() {
