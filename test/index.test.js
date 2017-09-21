@@ -317,7 +317,7 @@ describe('codemirror-mongodb', function() {
 
       it('does not recommend operators', function() {
         assert.equal(hints.list.length, 9);
-        assert.equal(hints.list[0].text, 'BSONDate');
+        assert.equal(hints.list[0].text, 'ISODate');
       });
 
       it('moves the from position + 1', function() {
@@ -342,7 +342,7 @@ describe('codemirror-mongodb', function() {
 
       it('recommends values', function() {
         assert.equal(hints.list.length, 9);
-        assert.equal(hints.list[0].text, 'BSONDate');
+        assert.equal(hints.list[0].text, 'ISODate');
       });
 
       it('moves the from position + 1', function() {
@@ -355,7 +355,7 @@ describe('codemirror-mongodb', function() {
 
       it('recommends values', function() {
         assert.equal(hints.list.length, 9);
-        assert.equal(hints.list[0].text, 'BSONDate');
+        assert.equal(hints.list[0].text, 'ISODate');
       });
 
       it('keeps the position', function() {
@@ -368,7 +368,7 @@ describe('codemirror-mongodb', function() {
 
       it('recommends values', function() {
         assert.equal(hints.list.length, 9);
-        assert.equal(hints.list[0].text, 'BSONDate');
+        assert.equal(hints.list[0].text, 'ISODate');
       });
 
       it('keeps the position', function() {
@@ -400,12 +400,24 @@ describe('codemirror-mongodb', function() {
       });
     });
 
-    codemirror.describe('{name: {$in: [ BSON█]}}', function() {
+    codemirror.describe('{name: {$in: [ ISO█]}}', function() {
       var hints = getHints(this.ctx.cm);
 
       it('recommends values', function() {
         assert.equal(hints.list.length, 1);
-        assert.equal(hints.list[0].text, 'BSONDate');
+        assert.equal(hints.list[0].text, 'ISODate');
+      });
+
+      it('keeps the position', function() {
+        assert.equal(hints.from.ch, 15);
+      });
+    });
+
+    codemirror.describe('{name: {$in: [ BSON█]}}', function() {
+      var hints = getHints(this.ctx.cm);
+
+      it('recommends no values', function() {
+        assert.equal(hints.list.length, 0);
       });
 
       it('keeps the position', function() {
@@ -524,7 +536,7 @@ describe('codemirror-mongodb', function() {
 
       it('returns a list of types', function() {
         assert.equal(hints.list.length, 9);
-        assert.equal(hints.list[0].text, 'BSONDate');
+        assert.equal(hints.list[0].text, 'ISODate');
       });
 
       it('moves the from position + 1', function() {
@@ -537,7 +549,7 @@ describe('codemirror-mongodb', function() {
 
       it('returns a list of types', function() {
         assert.equal(hints.list.length, 9);
-        assert.equal(hints.list[0].text, 'BSONDate');
+        assert.equal(hints.list[0].text, 'ISODate');
       });
 
       it('moves the from position + 1', function() {
