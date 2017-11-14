@@ -301,7 +301,7 @@ function Widget(completion, data) {
       cur.render(elt, data, cur);
     } else {
       var displayTextEl = document.createElement('span');
-      displayTextEl.innerHTML = cur.displayText || getText(cur);
+      displayTextEl.textContent = cur.displayText || getText(cur);
       elt.appendChild(displayTextEl);
     }
 
