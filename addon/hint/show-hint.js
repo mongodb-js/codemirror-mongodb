@@ -300,8 +300,9 @@ function Widget(completion, data) {
     if (cur.render) {
       cur.render(elt, data, cur);
     } else {
+      console.log(cur);
       var displayTextEl = document.createElement('span');
-      displayTextEl.textContent = cur.displayText || getText(cur);
+      displayTextEl.textContent = cur.text || getText(cur);
       elt.appendChild(displayTextEl);
     }
 
